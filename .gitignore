@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+**/.env
+!**/.env.example
+
+# Next.js / build
+.next/
+**/out/
+**/build/
+dist/
+
+# Logs & uploads
+logs/
+**/logs/
+uploads/
+**/uploads/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.pem
+
+# Misc
+_pdf_extract.txt
+*.tsbuildinfo
+.vercel/

@@ -1,0 +1,504 @@
+{
+  "info": {
+    "name": "LLBox AI Backend",
+    "description": "Phase 1 API collection for LLBox AI Communication Platform (dummy LLBox responses).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "token", "value": "" },
+    { "key": "conversationId", "value": "" },
+    { "key": "knowledgeId", "value": "" },
+    { "key": "promptId", "value": "" },
+    { "key": "settingId", "value": "" },
+    { "key": "callLogId", "value": "" },
+    { "key": "userId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login (Operator)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success && res.data && res.data.token) {",
+                  "  pm.collectionVariables.set('token', res.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"operator@llbox.ai\",\n  \"password\": \"Operator@123\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "Login (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success && res.data && res.data.token) {",
+                  "  pm.collectionVariables.set('token', res.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@llbox.ai\",\n  \"password\": \"Admin@123\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/auth/me"
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/auth/logout"
+          }
+        },
+        {
+          "name": "Register User (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Operator\",\n  \"email\": \"new.operator@llbox.ai\",\n  \"password\": \"Operator@123\",\n  \"role\": \"operator\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/register"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tools",
+      "item": [
+        {
+          "name": "Resolve Delivery",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderReference\": \"ABC123\"\n}"
+            },
+            "url": "{{baseUrl}}/api/tools/resolve-delivery"
+          }
+        },
+        {
+          "name": "Confirm Delivery",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deliverySessionId\": \"12345\",\n  \"boxId\": 7,\n  \"driverPhone\": \"+966500000001\",\n  \"otpProvided\": \"4589\"\n}"
+            },
+            "url": "{{baseUrl}}/api/tools/confirm-delivery"
+          }
+        },
+        {
+          "name": "Register Delivery",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"whatsappPhone\": \"+966500000000\",\n  \"orderReference\": \"ORDER-99231\"\n}"
+            },
+            "url": "{{baseUrl}}/api/tools/register-delivery"
+          }
+        },
+        {
+          "name": "Find Customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"whatsappPhone\": \"+9665xxxx\"\n}"
+            },
+            "url": "{{baseUrl}}/api/tools/find-customer"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Conversations",
+      "item": [
+        {
+          "name": "List Conversations",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/conversations?page=1&limit=20"
+          }
+        },
+        {
+          "name": "Create Conversation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.conversation) {",
+                  "  pm.collectionVariables.set('conversationId', res.data.conversation._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"callerNumber\": \"+966500000001\",\n  \"transcript\": \"Driver asked for OTP for ABC123\",\n  \"duration\": 60,\n  \"language\": \"en\",\n  \"intent\": \"resolve_delivery\",\n  \"toolCalls\": [{ \"toolName\": \"resolve-delivery\", \"input\": { \"orderReference\": \"ABC123\" }, \"success\": true }],\n  \"response\": \"OTP is 4589\",\n  \"status\": \"completed\"\n}"
+            },
+            "url": "{{baseUrl}}/api/conversations"
+          }
+        },
+        {
+          "name": "Get Conversation",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/conversations/{{conversationId}}"
+          }
+        },
+        {
+          "name": "Delete Conversation",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/conversations/{{conversationId}}"
+          }
+        },
+        {
+          "name": "List Call Logs",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/conversations/call-logs"
+          }
+        },
+        {
+          "name": "Create Call Log",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.callLog) {",
+                  "  pm.collectionVariables.set('callLogId', res.data.callLog._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"incomingNumber\": \"+966500000099\",\n  \"twilioCallSid\": \"CA_TEST_099\",\n  \"elevenLabsConversationId\": \"conv_test_099\",\n  \"status\": \"completed\",\n  \"duration\": 45,\n  \"recordingUrl\": \"https://example.com/rec.mp3\",\n  \"direction\": \"inbound\"\n}"
+            },
+            "url": "{{baseUrl}}/api/conversations/call-logs"
+          }
+        },
+        {
+          "name": "Update Call Log",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"completed\",\n  \"duration\": 50,\n  \"notes\": \"Updated from Postman\"\n}"
+            },
+            "url": "{{baseUrl}}/api/conversations/call-logs/{{callLogId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Knowledge",
+      "item": [
+        {
+          "name": "List Knowledge",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/knowledge"
+          }
+        },
+        {
+          "name": "Search Knowledge",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/knowledge/search?q=OTP"
+          }
+        },
+        {
+          "name": "Create Knowledge",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.article) {",
+                  "  pm.collectionVariables.set('knowledgeId', res.data.article._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Parcel size limits\",\n  \"content\": \"Maximum parcel dimensions for LLBox lockers are 40x40x60cm.\",\n  \"category\": \"policy\",\n  \"tags\": [\"size\", \"policy\"],\n  \"language\": \"en\",\n  \"isPublished\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/knowledge"
+          }
+        },
+        {
+          "name": "Update Knowledge",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Parcel size limits (updated)\"\n}"
+            },
+            "url": "{{baseUrl}}/api/knowledge/{{knowledgeId}}"
+          }
+        },
+        {
+          "name": "Delete Knowledge",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/knowledge/{{knowledgeId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Prompts",
+      "item": [
+        {
+          "name": "List Prompts",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/prompts"
+          }
+        },
+        {
+          "name": "Create Prompt",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.prompt) {",
+                  "  pm.collectionVariables.set('promptId', res.data.prompt._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Busy Fallback\",\n  \"type\": \"fallback\",\n  \"content\": \"One moment please while I look that up.\",\n  \"language\": \"en\",\n  \"isActive\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/prompts"
+          }
+        },
+        {
+          "name": "Update Prompt",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Please hold on for a second.\"\n}"
+            },
+            "url": "{{baseUrl}}/api/prompts/{{promptId}}"
+          }
+        },
+        {
+          "name": "Delete Prompt",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/prompts/{{promptId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Settings",
+      "item": [
+        {
+          "name": "List Settings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/settings"
+          }
+        },
+        {
+          "name": "Create Setting",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.setting) {",
+                  "  pm.collectionVariables.set('settingId', res.data.setting._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"key\": \"general.support_phone\",\n  \"category\": \"general\",\n  \"value\": \"+966920000000\",\n  \"label\": \"Support Phone\",\n  \"isSecret\": false\n}"
+            },
+            "url": "{{baseUrl}}/api/settings"
+          }
+        },
+        {
+          "name": "Update Setting",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"value\": \"+966920000001\"\n}"
+            },
+            "url": "{{baseUrl}}/api/settings/{{settingId}}"
+          }
+        },
+        {
+          "name": "Delete Setting",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/settings/{{settingId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/api/users"
+          }
+        }
+      ]
+    }
+  ]
+}
