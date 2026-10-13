@@ -26,6 +26,6 @@ App runs at http://localhost:3000
 - OTP (2FA): 123456
 
 ## Notes
-- Desktop-only UI (screens below 1024px show the desktop-access message)
+- Responsive UI (desktop and mobile, with collapsible sidebar on small screens)
 - node_modules and .next are excluded from this zip — run npm install after extracting
 - Optional: set NEXT_PUBLIC_SITE_URL for production Open Graph / social previews

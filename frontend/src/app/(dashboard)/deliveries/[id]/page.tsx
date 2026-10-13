@@ -1,8 +1,8 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useState } from "react";
-import { CheckCircle, Lock, RefreshCw, XCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Lock, XCircle } from "lucide-react";
 import { DetailHeader } from "@/components/shared/detail-header";
 import { DetailList, DetailRow } from "@/components/shared/detail-list";
 import { DeliveryTimeline } from "@/components/shared/delivery-timeline";
@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
-import { mockDeliveries } from "@/lib/mock-data";
+import { useDelivery } from "@/hooks/use-api";
 import { formatDateTime } from "@/lib/utils";
 import Link from "next/link";
 import type { Delivery } from "@/types";
@@ -21,9 +21,17 @@ export default function DeliveryDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const { toast } = useToast();
-  const found = mockDeliveries.find((d) => d.id === id);
-  const [delivery, setDelivery] = useState<Delivery | undefined>(found);
+  const { data: found, isLoading } = useDelivery(id);
+  const [delivery, setDelivery] = useState<Delivery | undefined>();
   const [confirmCancel, setConfirmCancel] = useState(false);
+
+  useEffect(() => {
+    if (found) setDelivery(found);
+  }, [found]);
+
+  if (isLoading && !delivery) {
+    return <div className="space-y-6" />;
+  }
 
   if (!delivery) {
     return (
@@ -45,28 +53,9 @@ export default function DeliveryDetailPage() {
         description={`Order ${delivery.orderReference} · ${delivery.city}`}
         badge={<StatusBadge status={delivery.status} />}
         actions={
-          <>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => toast("Locker reassigned", { description: "Nearest available locker selected." })}
-            >
-              <RefreshCw className="h-4 w-4" /> Reassign Locker
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setDelivery({ ...delivery, status: "completed", otpStatus: "verified" });
-                toast("Delivery confirmed", { description: "Marked as completed manually." });
-              }}
-            >
-              <CheckCircle className="h-4 w-4" /> Manual Confirm
-            </Button>
-            <Button variant="destructive" size="sm" onClick={() => setConfirmCancel(true)}>
-              <XCircle className="h-4 w-4" /> Cancel
-            </Button>
-          </>
+          <Button variant="destructive" size="sm" onClick={() => setConfirmCancel(true)}>
+            <XCircle className="h-4 w-4" /> Cancel
+          </Button>
         }
       />
 

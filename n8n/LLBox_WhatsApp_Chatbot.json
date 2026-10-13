@@ -1,0 +1,727 @@
+{
+  "name": "LLBox WhatsApp Chatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## LLBox WhatsApp Chatbot + ChatGPT\n\nCallback: `https://n8n.x-360.ai/webhook/llbox-whatsapp`\nVerify token: `llbox-whatsapp-verify`\n\n1. Config → paste OpenAI API key in `openaiApiKey`\n2. Keep WhatsApp token + Phone Number ID\n3. Activate workflow\n\nChat replies use **ChatGPT (gpt-4o-mini)**.\nOTP / register / find locker still use **LLBox APIs**.\nVoice calls stay on **ElevenLabs**.\nIf OpenAI key is missing, it falls back to simple rules.",
+        "height": 420,
+        "width": 380,
+        "color": 5
+      },
+      "id": "5efedef7-d957-402e-a300-2e21a806968c",
+      "name": "How to use",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        512
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-backend",
+              "name": "backendUrl",
+              "value": "https://apillbox.x-360.ai",
+              "type": "string"
+            },
+            {
+              "id": "cfg-token",
+              "name": "whatsappToken",
+              "value": "PASTE_WHATSAPP_TOKEN",
+              "type": "string"
+            },
+            {
+              "id": "cfg-phone-id",
+              "name": "whatsappPhoneNumberId",
+              "value": "1332077953313446",
+              "type": "string"
+            },
+            {
+              "id": "cfg-verify",
+              "name": "verifyToken",
+              "value": "llbox-whatsapp-verify",
+              "type": "string"
+            },
+            {
+              "id": "cfg-openai",
+              "name": "openaiApiKey",
+              "value": "PASTE_OPENAI_API_KEY",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "includeOtherFields": true
+        }
+      },
+      "id": "da00c250-8c33-45da-bad6-8ac5cbb4f026",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        736,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "llbox-whatsapp",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "43c7a995-b08c-4344-ae86-ee8bd1a81edc",
+      "name": "Meta Verify (GET)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        480,
+        80
+      ],
+      "webhookId": "llbox-whatsapp-get"
+    },
+    {
+      "parameters": {
+        "jsCode": "const q = $json.query || $json;\nconst mode = q['hub.mode'] || q.hubMode || '';\nconst token = q['hub.verify_token'] || q.hubVerifyToken || '';\nconst challenge = q['hub.challenge'] || q.hubChallenge || '';\nconst expected = 'llbox-whatsapp-verify';\nconst ok = mode === 'subscribe' && token === expected;\nreturn [{ json: { ok, challenge: String(challenge), mode, token } }];"
+      },
+      "id": "ebb548ac-d3cc-49bf-88f1-ed14c532297c",
+      "name": "Check Verify Token",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        704,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond-ok",
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c68261a4-55c0-4e28-9ecf-fc2404f8c152",
+      "name": "Verify OK?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        928,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.challenge }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "15106069-c2db-410d-a0ec-0e83151e3a16",
+      "name": "Return Challenge",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "forbidden",
+        "options": {
+          "responseCode": 403
+        }
+      },
+      "id": "955c39ad-f43a-4517-a48a-8d93beaedc32",
+      "name": "Reject Verify",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"success\": true }",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "7e8afbb7-282b-4fa7-a51e-21ff08b4a472",
+      "name": "Ack Meta 200",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        736,
+        816
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $('Webhook Trigger').item.json;\nconst body = raw.body || raw;\nconst change = body?.entry?.[0]?.changes?.[0]?.value || {};\nconst message = Array.isArray(change.messages) ? change.messages[0] : null;\nconst statuses = Array.isArray(change.statuses) ? change.statuses : [];\nconst isStatusOnly = !message && statuses.length > 0;\nif (isStatusOnly) {\n  return [{ json: { skip: true, isMessage: false, reason: 'delivery_status' } }];\n}\nif (!message) {\n  return [{ json: { skip: true, isMessage: false, reason: 'no_message', debugKeys: Object.keys(body || {}) } }];\n}\nconst text = message.type === 'text' ? String(message.text?.body || '').trim() : '';\nreturn [{\n  json: {\n    skip: false,\n    isMessage: true,\n    unsupported: message.type !== 'text' || !text,\n    phone: String(message.from || ''),\n    text,\n    messageId: message.id || '',\n    waProfileName: change.contacts?.[0]?.profile?.name || '',\n    phoneNumberId: change.metadata?.phone_number_id || ''\n  }\n}];"
+      },
+      "id": "b2dfb068-ed55-4ebf-9f80-3288fe1267fe",
+      "name": "Parse WhatsApp Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond-skip",
+              "leftValue": "={{ $json.isMessage }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5376ad0d-4999-43cd-b5ed-8bf1038174b6",
+      "name": "Is Real Message?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1184,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://apillbox.x-360.ai/api/whatsapp/contacts/lookup",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ phone: $json.phone }) }}",
+        "options": {
+          "timeout": 20000
+        }
+      },
+      "id": "33d83ee7-c4f7-4b7a-a6d4-9d3787b28632",
+      "name": "Lookup Contact in Backend DB",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1424,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const parsed = $('Parse WhatsApp Payload').item.json;\nconst cfg = $('Config').item.json;\nconst lookup = $json.data || $json;\nconst contact = lookup.contact || {};\nconst phone = parsed.phone;\nconst text = parsed.text || '';\nconst waProfileName = parsed.waProfileName || '';\nconst knownName = (contact.name || '').trim();\nconst openaiKey = String(cfg.openaiApiKey || '').trim();\n\nconst extractOrder = (value) => {\n  const m = String(value || '').match(/[A-Z0-9][A-Z0-9._-]{4,}/i);\n  return m ? m[0] : '';\n};\n\nconst fallback = () => {\n  const lower = text.toLowerCase();\n  const looksLikeName = (value) => {\n    const v = String(value || '').trim();\n    if (!v || v.length < 2 || v.length > 40) return false;\n    if (/\\d/.test(v)) return false;\n    if (/otp|order|delivery|locker|box|register|confirm|hi|hello|hey/.test(v.toLowerCase())) return false;\n    return /^[\\p{L} .'-]+$/u.test(v);\n  };\n  let action = 'chat';\n  let name = knownName;\n  let orderReference = extractOrder(text) || contact.lastOrderReference || '';\n  let reply = '';\n  let saveName = '';\n  let awaiting = false;\n  if (!knownName && looksLikeName(text)) {\n    saveName = text.trim();\n    name = saveName;\n    action = 'save_name';\n    reply = `Nice to meet you, ${name}. How can I help you today?`;\n  } else if (!knownName) {\n    awaiting = true;\n    action = 'ask_name';\n    reply = 'Welcome to LLBox. What is your name?';\n  } else if (/(otp|open|rider|driver)/i.test(lower) && extractOrder(text)) {\n    action = 'resolve';\n    reply = '';\n  } else if (/(register)/i.test(lower) && extractOrder(text)) {\n    action = 'register';\n    reply = '';\n  } else if (/(locker|find my)/i.test(lower)) {\n    action = 'find';\n    reply = '';\n  } else {\n    action = 'chat';\n    reply = `Hi ${name}, I can help with deliveries, locker lookup, or rider OTP.`;\n  }\n  return { action, phone, name, saveName, awaitingName: awaiting, orderReference, text, reply, boxId: 3, waProfileName, registered: Boolean(knownName), aiUsed: false };\n};\n\nlet result = fallback();\n\nif (openaiKey && openaiKey !== 'PASTE_OPENAI_API_KEY' && !parsed.unsupported) {\n  try {\n    const ai = await this.helpers.httpRequest({\n      method: 'POST',\n      url: 'https://api.openai.com/v1/chat/completions',\n      headers: {\n        Authorization: 'Bearer ' + openaiKey,\n        'Content-Type': 'application/json',\n      },\n      body: {\n        model: 'gpt-4o-mini',\n        temperature: 0.4,\n        response_format: { type: 'json_object' },\n        messages: [\n          {\n            role: 'system',\n            content: 'You are the LLBox WhatsApp assistant for smart locker deliveries in Saudi Arabia. Be short, friendly, and useful. If knownName is not empty, greet the user by that name and NEVER ask for their name again. If knownName is empty, ask for their name once. If the user message is clearly a person name, set action to save_name. For locker OTP use action resolve. To register a delivery use action register. To find a locker use action find. Otherwise use action chat. Return ONLY JSON with keys: action, reply, name, saveName, awaitingName, orderReference. action must be one of: chat, ask_name, save_name, resolve, register, find. reply is the WhatsApp text. Do not invent OTP codes.'\n          },\n          {\n            role: 'user',\n            content: JSON.stringify({\n              knownName,\n              awaitingName: Boolean(contact.awaitingName) && !knownName,\n              phone,\n              lastOrderReference: contact.lastOrderReference || '',\n              userMessage: text\n            })\n          }\n        ]\n      },\n      json: true,\n    });\n    const raw = ai.choices?.[0]?.message?.content || '{}';\n    const parsedAi = JSON.parse(raw);\n    const allowed = ['chat', 'ask_name', 'save_name', 'resolve', 'register', 'find'];\n    const action = allowed.includes(parsedAi.action) ? parsedAi.action : 'chat';\n    result = {\n      action,\n      phone,\n      name: parsedAi.name || knownName || parsedAi.saveName || '',\n      saveName: parsedAi.saveName || (action === 'save_name' ? text.trim() : knownName),\n      awaitingName: Boolean(parsedAi.awaitingName) && !knownName && action === 'ask_name',\n      orderReference: parsedAi.orderReference || extractOrder(text) || contact.lastOrderReference || '',\n      text,\n      reply: parsedAi.reply || result.reply,\n      boxId: 3,\n      waProfileName,\n      registered: Boolean(knownName || parsedAi.saveName),\n      aiUsed: true\n    };\n    if ((action === 'resolve' || action === 'register') && !result.orderReference) {\n      result.action = 'chat';\n      result.reply = (result.name ? `Hi ${result.name}, ` : '') + 'Please send the order reference. Example: ABC123';\n    }\n  } catch (e) {\n    result.aiError = String(e.message || e);\n  }\n}\n\nreturn [{ json: result }];\n"
+      },
+      "id": "e340a579-986e-4ef5-b9b9-0645b6952111",
+      "name": "ChatGPT Brain",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1648,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "resolve",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "resolve"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "register",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "register"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "find",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "find"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "d6137f01-dacc-4a28-86a6-5a58b0385c58",
+      "name": "Route Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1856,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://apillbox.x-360.ai/api/tools/resolve-delivery",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ orderReference: $json.orderReference }) }}",
+        "options": {
+          "timeout": 25000
+        }
+      },
+      "id": "15852266-87bb-4c58-ba81-ec651981daff",
+      "name": "LLBox Resolve OTP",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2128,
+        192
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://apillbox.x-360.ai/api/tools/register-delivery",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ whatsappPhone: '+' + $json.phone.replace(/^\\+/, ''), orderReference: $json.orderReference, boxId: 3 }) }}",
+        "options": {
+          "timeout": 25000
+        }
+      },
+      "id": "2bea7817-75b1-4a8c-851f-840b5ea77031",
+      "name": "LLBox Register Delivery",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2128,
+        400
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://apillbox.x-360.ai/api/tools/find-customer",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ whatsappPhone: '+' + $json.phone.replace(/^\\+/, '') }) }}",
+        "options": {
+          "timeout": 25000
+        }
+      },
+      "id": "70bf8526-681d-4e37-b9d4-2cd334902751",
+      "name": "LLBox Find Locker",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2144,
+        704
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const decided = $('ChatGPT Brain').item.json;\nconst action = decided.action;\nlet reply = decided.reply;\nconst name = decided.name || 'there';\n\nif (action === 'resolve') {\n  const res = $json;\n  if (res.success && res.data?.otp) {\n    const d = res.data;\n    reply = `Hi ${name}, your OTP is ${d.otp}.\\nLocker: ${d.boxCode || ''}\\nAddress: ${d.address || ''}\\nExpires: ${d.otpExpiresAt || ''}\\nEnter this code on the box keypad to open it.`;\n  } else {\n    reply = `Hi ${name}, I could not get an OTP yet. ${res.message || 'Please check the order reference.'}`;\n  }\n} else if (action === 'register') {\n  const res = $json;\n  if (res.success) {\n    reply = `Hi ${name}, delivery ${decided.orderReference} is registered for locker ${res.data?.boxCode || 'QA-PROD-TEST-BOX'}. The rider can now request OTP with this order reference.`;\n  } else {\n    reply = `Hi ${name}, I could not register that delivery. ${res.message || ''}`;\n  }\n} else if (action === 'find') {\n  const res = $json;\n  if (res.success && res.data?.userFound) {\n    reply = `Hi ${name}, your locker is ${res.data.locker}.`;\n  } else {\n    reply = `Hi ${name}, I could not find a locker on this WhatsApp number yet.`;\n  }\n}\n\nreturn [{\n  json: {\n    phone: decided.phone,\n    name,\n    saveName: decided.saveName || decided.name,\n    awaitingName: decided.awaitingName,\n    lastIntent: action,\n    lastOrderReference: decided.orderReference || '',\n    lastInboundText: decided.text || '',\n    reply\n  }\n}];"
+      },
+      "id": "cf563151-b9f3-4a2b-bab3-3b5bdae08d3d",
+      "name": "Build WhatsApp Reply",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2384,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v21.0/{{ $('Config').item.json.whatsappPhoneNumberId }}/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Config').item.json.whatsappToken }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $json.phone, type: 'text', text: { body: $json.reply } }) }}",
+        "options": {
+          "timeout": 25000
+        }
+      },
+      "id": "82485b5b-afec-44db-b74d-d6180dd2bc91",
+      "name": "Send WhatsApp Reply",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2624,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://apillbox.x-360.ai/api/whatsapp/contacts",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ phone: $('Build WhatsApp Reply').item.json.phone, name: $('Build WhatsApp Reply').item.json.saveName, awaitingName: $('Build WhatsApp Reply').item.json.awaitingName, lastIntent: $('Build WhatsApp Reply').item.json.lastIntent, lastOrderReference: $('Build WhatsApp Reply').item.json.lastOrderReference, lastInboundText: $('Build WhatsApp Reply').item.json.lastInboundText }) }}",
+        "options": {
+          "timeout": 20000
+        }
+      },
+      "id": "e3a30e1a-9237-4ad6-bfa1-1aa853de255e",
+      "name": "Save Contact to Backend DB",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2864,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "llbox-whatsapp",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "0bccd531-44a8-4a7d-abb7-e5c6983e0e8b",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        320,
+        416
+      ],
+      "webhookId": "llbox-whatsapp-post"
+    },
+    {
+      "parameters": {},
+      "id": "noop-ignore-status",
+      "name": "Ignore Status Receipt",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        720
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Meta Verify (GET)": {
+      "main": [
+        [
+          {
+            "node": "Check Verify Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Verify Token": {
+      "main": [
+        [
+          {
+            "node": "Verify OK?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify OK?": {
+      "main": [
+        [
+          {
+            "node": "Return Challenge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject Verify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Parse WhatsApp Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse WhatsApp Payload": {
+      "main": [
+        [
+          {
+            "node": "Is Real Message?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Real Message?": {
+      "main": [
+        [
+          {
+            "node": "Lookup Contact in Backend DB",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ignore Status Receipt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup Contact in Backend DB": {
+      "main": [
+        [
+          {
+            "node": "ChatGPT Brain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Action": {
+      "main": [
+        [
+          {
+            "node": "LLBox Resolve OTP",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "LLBox Register Delivery",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "LLBox Find Locker",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build WhatsApp Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLBox Resolve OTP": {
+      "main": [
+        [
+          {
+            "node": "Build WhatsApp Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLBox Register Delivery": {
+      "main": [
+        [
+          {
+            "node": "Build WhatsApp Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLBox Find Locker": {
+      "main": [
+        [
+          {
+            "node": "Build WhatsApp Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build WhatsApp Reply": {
+      "main": [
+        [
+          {
+            "node": "Send WhatsApp Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send WhatsApp Reply": {
+      "main": [
+        [
+          {
+            "node": "Save Contact to Backend DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Ack Meta 200",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ChatGPT Brain": {
+      "main": [
+        [
+          {
+            "node": "Route Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "1acebea4-6715-4ba2-a2e6-4b28f249cc98",
+  "meta": {
+    "instanceId": "860a61d6ddf1dc2abbb79c4bc36985b4a955fb12262acecd3f45ce5fa8af8805"
+  },
+  "id": "dtwKJPnyo5g3dFcJ",
+  "tags": []
+}

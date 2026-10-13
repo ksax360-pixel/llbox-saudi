@@ -2,14 +2,16 @@
 
 import Link from "next/link";
 import { MapPin, Warehouse } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { LockerGoogleMap } from "@/components/maps/locker-google-map";
 import { DetailHeader } from "@/components/shared/detail-header";
 import { SearchBar } from "@/components/shared/search-bar";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { mockLockers } from "@/lib/mock-data";
+import { useLockers } from "@/hooks/use-api";
 import { cn } from "@/lib/utils";
+import { apiRequest } from "@/lib/api-client";
 import type { Locker, LockerStatus } from "@/types";
 
 const statusColors: Record<LockerStatus, string> = {
@@ -23,9 +25,20 @@ export default function LockerMapPage() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<string>("all");
   const [selected, setSelected] = useState<Locker | null>(null);
+  const [mapsApiKey, setMapsApiKey] = useState(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "");
+  const { data: allLockers = [] } = useLockers();
+
+  useEffect(() => {
+    if (mapsApiKey) return;
+    apiRequest<{ googleMapsApiKey?: string }>("/api/auth/public-config")
+      .then((data) => {
+        if (data.googleMapsApiKey) setMapsApiKey(data.googleMapsApiKey);
+      })
+      .catch(() => {});
+  }, [mapsApiKey]);
 
   const lockers = useMemo(() => {
-    return mockLockers.filter((l) => {
+    return allLockers.filter((l) => {
       const matchSearch =
         l.boxCode.toLowerCase().includes(search.toLowerCase()) ||
         l.location.toLowerCase().includes(search.toLowerCase()) ||
@@ -33,15 +46,7 @@ export default function LockerMapPage() {
       const matchFilter = filter === "all" || l.status === filter;
       return matchSearch && matchFilter;
     });
-  }, [search, filter]);
-
-  // Normalize lat/lng to % positions for a simple grid map
-  const lats = lockers.map((l) => l.latitude);
-  const lngs = lockers.map((l) => l.longitude);
-  const minLat = Math.min(...lats, 24.6);
-  const maxLat = Math.max(...lats, 25.1);
-  const minLng = Math.min(...lngs, 46.5);
-  const maxLng = Math.max(...lngs, 47.0);
+  }, [search, filter, allLockers]);
 
   return (
     <div className="space-y-6">
@@ -75,42 +80,20 @@ export default function LockerMapPage() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2 overflow-hidden">
-          <CardContent className="relative p-0">
-            <div
-              className="relative aspect-[4/3] w-full bg-[linear-gradient(135deg,#F8F9FA_25%,#EEF0F2_25%,#EEF0F2_50%,#F8F9FA_50%,#F8F9FA_75%,#EEF0F2_75%)] bg-[length:24px_24px]"
-              role="img"
-              aria-label="Locker map"
-            >
-              <div className="absolute inset-4 rounded-xl border border-[#E5E7EB] bg-white/60 backdrop-blur-[1px]">
-                {lockers.map((locker) => {
-                  const top = 100 - ((locker.latitude - minLat) / (maxLat - minLat || 1)) * 100;
-                  const left = ((locker.longitude - minLng) / (maxLng - minLng || 1)) * 100;
-                  return (
-                    <button
-                      key={locker.id}
-                      type="button"
-                      onClick={() => setSelected(locker)}
-                      className={cn(
-                        "absolute -translate-x-1/2 -translate-y-1/2 rounded-full p-1.5 transition-transform hover:scale-125 focus-visible:scale-125",
-                        selected?.id === locker.id && "ring-2 ring-[#111827] ring-offset-2"
-                      )}
-                      style={{ top: `${Math.min(Math.max(top, 5), 95)}%`, left: `${Math.min(Math.max(left, 5), 95)}%` }}
-                      aria-label={`${locker.boxCode} — ${locker.status}`}
-                      title={locker.boxCode}
-                    >
-                      <span className={cn("block h-3 w-3 rounded-full", statusColors[locker.status])} />
-                    </button>
-                  );
-                })}
-              </div>
-              <div className="absolute bottom-3 left-3 flex flex-wrap gap-3 rounded-lg border border-[#E5E7EB] bg-white px-3 py-2 text-xs">
-                {(Object.keys(statusColors) as LockerStatus[]).map((s) => (
-                  <span key={s} className="flex items-center gap-1.5 capitalize text-[#6B7280]">
-                    <span className={cn("h-2 w-2 rounded-full", statusColors[s])} />
-                    {s.replace("_", " ")}
-                  </span>
-                ))}
-              </div>
+          <CardContent className="p-0">
+            <LockerGoogleMap
+              apiKey={mapsApiKey}
+              lockers={lockers}
+              selected={selected}
+              onSelect={setSelected}
+            />
+            <div className="flex flex-wrap gap-3 border-t border-[#E5E7EB] px-4 py-3 text-xs">
+              {(Object.keys(statusColors) as LockerStatus[]).map((s) => (
+                <span key={s} className="flex items-center gap-1.5 capitalize text-[#6B7280]">
+                  <span className={cn("h-2 w-2 rounded-full", statusColors[s])} />
+                  {s.replace("_", " ")}
+                </span>
+              ))}
             </div>
           </CardContent>
         </Card>

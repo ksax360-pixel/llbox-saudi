@@ -44,7 +44,11 @@ const knowledgeSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-knowledgeSchema.index({ title: 'text', content: 'text', tags: 'text' });
+// language_override must not use our app `language` field (values like `ar` are not Mongo text languages)
+knowledgeSchema.index(
+  { title: 'text', content: 'text', tags: 'text' },
+  { default_language: 'none', language_override: 'unused_text_language' }
+);
 knowledgeSchema.index({ category: 1, isPublished: 1 });
 
 module.exports = mongoose.model('Knowledge', knowledgeSchema);

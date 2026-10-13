@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const { success, fail } = require('../utils/response');
 const { HTTP_STATUS, ROLES } = require('../utils/constants');
+const crmService = require('../services/crm.service');
 
 const listUsers = async (req, res, next) => {
   try {
@@ -52,6 +53,7 @@ const updateUser = async (req, res, next) => {
       return fail(res, 'Invalid role', HTTP_STATUS.BAD_REQUEST);
     }
 
+    const before = await User.findById(req.params.id);
     const user = await User.findByIdAndUpdate(req.params.id, updates, {
       new: true,
       runValidators: true,
@@ -60,6 +62,18 @@ const updateUser = async (req, res, next) => {
     if (!user) {
       return fail(res, 'User not found', HTTP_STATUS.NOT_FOUND);
     }
+
+    await crmService
+      .logAudit({
+        userId: req.user._id,
+        userName: req.user.name,
+        action: 'update_user',
+        resource: `users/${user.email}`,
+        ipAddress: String(req.headers['x-forwarded-for'] || req.ip || '').split(',')[0].trim(),
+        beforeValue: before ? `${before.name}/${before.role}/${before.isActive}` : '',
+        afterValue: `${user.name}/${user.role}/${user.isActive}`,
+      })
+      .catch(() => {});
 
     return success(res, { user: user.toSafeObject() }, 'User updated');
   } catch (error) {

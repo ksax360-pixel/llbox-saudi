@@ -10,7 +10,17 @@ const registerRules = [
   body('name').trim().notEmpty().withMessage('Name is required').isLength({ max: 120 }),
   body('email').isEmail().withMessage('Valid email is required').normalizeEmail(),
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  body('mobile').trim().notEmpty().withMessage('Mobile number is required for WhatsApp verification'),
   body('role').optional().isIn(Object.values(ROLES)).withMessage('Invalid role'),
+];
+
+const otpResendRules = [
+  body('otpSessionId').trim().notEmpty().withMessage('otpSessionId is required'),
+];
+
+const otpVerifyRules = [
+  body('otpSessionId').trim().notEmpty().withMessage('otpSessionId is required'),
+  body('code').trim().isLength({ min: 6, max: 6 }).withMessage('Enter the 6-digit code'),
 ];
 
 const mongoIdParam = [param('id').isMongoId().withMessage('Invalid id')];
@@ -33,6 +43,83 @@ const registerDeliveryRules = [
   body('whatsappPhone').trim().notEmpty().withMessage('whatsappPhone is required'),
   body('orderReference').trim().notEmpty().withMessage('orderReference is required'),
   body('boxId').optional(),
+  body('expectedDeliveryDate').optional().isString(),
+  body('expected_delivery_date').optional().isString(),
+];
+
+const clearLockerSessionRules = [
+  body('orderReference').optional().isString(),
+  body('boxId').optional(),
+  body('deliverySessionId').optional().isString(),
+  body().custom((_, { req }) => {
+    if (!req.body.orderReference && !req.body.boxId && !req.body.deliverySessionId) {
+      throw new Error('orderReference or boxId is required');
+    }
+    return true;
+  }),
+];
+
+const validateOtpRules = [
+  body('otp').optional().isString(),
+  body('otpProvided').optional().isString(),
+  body('deliverySessionId').optional().isString(),
+  body('boxId').optional(),
+  body('orderReference').optional().isString(),
+  body().custom((_, { req }) => {
+    if (!req.body.otp && !req.body.otpProvided) {
+      throw new Error('otp or otpProvided is required');
+    }
+    return true;
+  }),
+];
+
+const getDeliveryStatusRules = [
+  body('orderReference').optional().isString(),
+  body('order_reference').optional().isString(),
+  body().custom((_, { req }) => {
+    if (!req.body.orderReference && !req.body.order_reference) {
+      throw new Error('orderReference is required');
+    }
+    return true;
+  }),
+];
+
+const createSupportTicketRules = [
+  body('ticket').optional().isObject(),
+  body('correlationId').optional().isString(),
+];
+
+const identifyWhatsappRules = [
+  body('whatsappPhone').optional().isString(),
+  body('phone').optional().isString(),
+  body().custom((_, { req }) => {
+    if (!req.body.whatsappPhone && !req.body.phone) {
+      throw new Error('whatsappPhone or phone is required');
+    }
+    return true;
+  }),
+];
+
+const conversationTurnRules = [
+  body('phone').isString().notEmpty(),
+  body('text').optional({ nullable: true }).isString(),
+  body('inputType').optional().isString(),
+  body('mediaContext').optional({ nullable: true }).isString(),
+  body('aiReply').optional({ nullable: true }).isString(),
+  body('messageId').optional({ nullable: true }).isString(),
+];
+
+const notifyRecipientRules = [
+  body('orderReference').optional().isString(),
+  body('order_reference').optional().isString(),
+  body('issue').optional().isString(),
+  body('note').optional().isString(),
+  body().custom((_, { req }) => {
+    if (!req.body.orderReference && !req.body.order_reference) {
+      throw new Error('orderReference is required');
+    }
+    return true;
+  }),
 ];
 
 const findCustomerRules = [
@@ -157,11 +244,20 @@ const updateUserRules = [
 module.exports = {
   loginRules,
   registerRules,
+  otpResendRules,
+  otpVerifyRules,
   mongoIdParam,
   resolveDeliveryRules,
   confirmDeliveryRules,
   registerDeliveryRules,
   findCustomerRules,
+  clearLockerSessionRules,
+  validateOtpRules,
+  getDeliveryStatusRules,
+  createSupportTicketRules,
+  identifyWhatsappRules,
+  notifyRecipientRules,
+  conversationTurnRules,
   createConversationRules,
   createCallLogRules,
   updateCallLogRules,

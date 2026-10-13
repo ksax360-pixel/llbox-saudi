@@ -5,6 +5,7 @@ const { connectDatabase } = require('./config/database');
 const logger = require('./config/logger');
 
 const PORT = process.env.PORT || 5000;
+const HOST = process.env.HOST || '127.0.0.1';
 
 const start = async () => {
   try {
@@ -13,10 +14,11 @@ const start = async () => {
     }
 
     await connectDatabase();
+    require('./services/followup.service').start();
 
-    app.listen(PORT, () => {
-      logger.info(`LLBox AI Backend running on port ${PORT}`);
-      logger.info(`Health check: http://localhost:${PORT}/health`);
+    app.listen(PORT, HOST, () => {
+      logger.info(`LLBox AI Backend running on ${HOST}:${PORT}`);
+      logger.info(`Health check: http://${HOST}:${PORT}/health`);
       logger.info(`LLBox dummy mode: ${process.env.LLBOX_DUMMY_MODE !== 'false'}`);
     });
   } catch (error) {

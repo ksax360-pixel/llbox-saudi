@@ -7,7 +7,7 @@ import { DataTable } from "@/components/shared/data-table";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { mockAuditLogs } from "@/lib/mock-data";
+import { useAdminSummary } from "@/hooks/use-api";
 import { formatDateTime } from "@/lib/utils";
 import { ROLE_LABELS } from "@/lib/rbac";
 import type { AuditLog } from "@/types";
@@ -26,6 +26,9 @@ const auditColumns: ColumnDef<AuditLog>[] = [
 const roles: UserRole[] = ["super_admin", "operations_admin", "customer_support", "ai_supervisor", "customer"];
 
 export default function AdminPage() {
+  const { data } = useAdminSummary();
+  const roleCounts = data?.roleCounts || {};
+  const logs = data?.logs || [];
   return (
     <div className="space-y-8">
       <PageHeader
@@ -58,7 +61,7 @@ export default function AdminPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-2xl font-semibold text-[#111827]">
-                  {role === "super_admin" ? 2 : role === "operations_admin" ? 8 : role === "customer_support" ? 12 : role === "ai_supervisor" ? 4 : 450}
+                  {roleCounts[role] ?? 0}
                 </p>
                 <p className="text-xs text-[#6B7280]">active users</p>
               </CardContent>
@@ -69,7 +72,7 @@ export default function AdminPage() {
 
       <section>
         <h2 className="mb-4 text-lg font-semibold text-[#111827]">Audit Logs</h2>
-        <DataTable columns={auditColumns} data={mockAuditLogs} searchPlaceholder="Search audit logs..." exportFilename="audit-logs" />
+        <DataTable columns={auditColumns} data={logs} searchPlaceholder="Search audit logs..." exportFilename="audit-logs" />
       </section>
     </div>
   );

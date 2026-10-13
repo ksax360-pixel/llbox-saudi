@@ -1,0 +1,540 @@
+{
+ "started": "2026-10-03T08:09:47.819858+00:00",
+ "refs": {
+  "R1": "X360-LIVE-149871",
+  "R2": "AMZ-14987-02",
+  "R3": "NOON1498703",
+  "R4": "X360-AR-149874",
+  "R5": "50114987005",
+  "R6": "ARZ-14987-06",
+  "R7": "URDU1498707",
+  "R8A": "TWO149878A",
+  "R8B": "TWO149878B",
+  "R9": "EMOJI149879",
+  "R10": "SAFE-LV-1498710",
+  "R11": "DUP1498711",
+  "R12": "171-1498712-1498734567",
+  "R13": "ORD1498713",
+  "R14": "MIX1498714",
+  "R15": "SHN1498715",
+  "R16": "FULL1498716"
+ },
+ "scenarios": [
+  {
+   "id": "C1",
+   "part": "customer",
+   "title": "Known customer says hi",
+   "before": "-",
+   "expected": "Personal greeting for a recognised LLBox customer, no code.",
+   "results": [
+    {
+     "execution": "8884",
+     "reply": "Hello QA ProdTest 👋 This is LLBox.\nYou have 9 deliveries registered, 21 with a driver on the way, a parcel waiting to be collected.\n\nWould you like to register a delivery you're expecting? Send me the order or tracking number.",
+     "sent_ok": true,
+     "send_error": null,
+     "outcome": "customer_greeting",
+     "photos": [],
+     "photos_sent": 0,
+     "workflow_error": null,
+     "replied_flag": true,
+     "phone": "966500000001",
+     "text": "hii",
+     "label": "",
+     "seconds": 7.9,
+     "notify": [],
+     "dup_replies": null,
+     "executions": [
+      "8884"
+     ],
+     "failed": [],
+     "checks": [
+      "replied",
+      "noCode",
+      "noFiller"
+     ]
+    }
+   ],
+   "auto_pass": true
+  },
+  {
+   "id": "C2b",
+   "part": "setup",
+   "title": "Re-register R2/R3 for a targeted re-run",
+   "before": "-",
+   "expected": "Setup only.",
+   "rerun_only": true,
+   "results": [
+    {
+     "execution": "8887",
+     "reply": "Done ✅ AMZ-14987-02 is registered for Saturday 10 October.\nWhen the driver arrives I'll give them a code and let you know.",
+     "sent_ok": true,
+     "send_error": null,
+     "outcome": "registered",
+     "photos": [],
+     "photos_sent": 0,
+     "workflow_error": null,
+     "replied_flag": true,
+     "phone": "966500000001",
+     "text": "AMZ-14987-02 next saturday",
+     "label": "customer registers R2",
+     "seconds": 9.9,
+     "notify": [],
+     "dup_replies": null,
+     "executions": [
+      "8887"
+     ],
+     "failed": [],
+     "checks": [
+      "registered",
+      "noCode"
+     ]
+    },
+    {
+     "execution": "8890",
+     "reply": "Done ✅ NOON1498703 is registered for Saturday 10 October.\nWhen the driver arrives I'll give them a code and let you know.\n\nThat makes 4 deliveries expected on 2026-10-10. The box comfortably holds 3, so it may get tight if the parcels are large.",
+     "sent_ok": true,
+     "send_error": null,
+     "outcome": "registered",
+     "photos": [],
+     "photos_sent": 0,
+     "workflow_error": null,
+     "replied_flag": true,
+     "phone": "966500000001",
+     "text": "NOON1498703 next saturday",
+     "label": "customer registers R3",
+     "seconds": 7.8,
+     "notify": [],
+     "dup_replies": null,
+     "executions": [
+      "8890"
+     ],
+     "failed": [],
+     "checks": [
+      "registered",
+      "noCode"
+     ]
+    },
+    {
+     "execution": "8893",
+     "reply": "Done ✅ MIX1498714 is registered for Saturday 10 October.\nWhen the driver arrives I'll give them a code and let you know.\n\nThat makes 5 deliveries expected on 2026-10-10. The box comfortably holds 3, so it may get tight if the parcels are large.",
+     "sent_ok": true,
+     "send_error": null,
+     "outcome": "registered",
+     "photos": [],
+     "photos_sent": 0,
+     "workflow_error": null,
+     "replied_flag": true,
+     "phone": "966500000001",
+     "text": "MIX1498714 next saturday",
+     "label": "customer registers R14",
+     "seconds": 7.9,
+     "notify": [],
+     "dup_replies": null,
+     "executions": [
+      "8893"
+     ],
+     "failed": [],
+     "checks": [
+      "registered",
+      "noCode"
+     ]
+    }
+   ],
+   "auto_pass": true
+  },
+  {
+   "id": "16",
+   "part": "report",
+   "title": "\"The code is not working\" (driver at the box)",
+   "before": "FAIL",
+   "expected": "Exactly one notify (code_not_working); 'let the customer know' only if notified.",
+   "results": [
+    {
+     "execution": "8896",
+     "reply": "Hello, this is LLBox 👋\n\nI've found the box expecting order AMZ-14987-02, and I'll take the delivery for you.\n\nYour one-time code\n572171\nValid until Tuesday 11:10.\n\n📍 7154 Al Jaouar, Al Faruq, Riyadh 12861\nMap: maps.google.com/?q=24.651022,46.764264\n\nI've sent photos of the street and the box below so you can find it easily.\n\nWhat to do when you arrive\n1. Find the LLBox at the address above\n2. Enter 572171 on the keypad\n3. The lid will open\n4. Place the parcel inside carefully\n5. Close the lid firmly until it clicks\n6. That's it — the delivery is marked complete automatically\n\nNo signature needed. Thanks, and drive safely.",
+     "sent_ok": true,
+     "send_error": null,
+     "outcome": "handover",
+     "photos": [
+      "Street: approach from here (QA test image)",
+      "Building (QA test image)",
+      "Front door, LLBox on the wall (QA test image)",
+      "The LLBox: enter the code on the keypad (QA test image)"
+     ],
+     "photos_sent": 4,
+     "workflow_error": null,
+     "replied_flag": true,
+     "phone": "919606742371",
+     "text": "AMZ-14987-02",
+     "label": "driver gets code",
+     "seconds": 10.1,
+     "notify": [],
+     "dup_replies": null,
+     "executions": [
+      "8896"
+     ],
+     "failed": [],
+     "checks": [
+      "code"
+     ]
+    },
+    {
+     "execution": "8907",
+     "reply": "Sorry the code isn't working for AMZ-14987-02.\n\nI've let the customer know in their app and they should reply shortly.\nIf you can't wait, please follow your usual process for an undelivered parcel — nothing is recorded against you.",
+     "sent_ok": true,
+     "send_error": null,
+     "outcome": "stuck_notified",
+     "photos": [],
+     "photos_sent": 0,
+     "workflow_error": null,
+     "replied_flag": true,
+     "phone": "919606742371",
+     "text": "the code is not working for AMZ-14987-02 what do i do",
+     "label": "code not working",
+     "seconds": 7.9,
+     "notify": [
+      {
+       "ref": "AMZ-14987-02",
+       "issue": "code_not_working",
+       "status": "200",
+       "notified": "true"
+      }
+     ],
+     "dup_replies": null,
+     "executions": [
+      "8907"
+     ],
+     "failed": [],
+     "checks": [
+      "notify1",
+      "noCode",
+      "honest"
+     ]
+    }
+   ],
+   "auto_pass": true
+  },
+  {
+   "id": "17",
+   "part": "report",
+   "title": "\"Box is full, parcel does not fit, tell the customer\"",
+   "before": "FAIL",
+   "expected": "Asks for the reference, then exactly one notify with the driver's words.",
+   "results": [
+    {
+     "execution": "8910",
+     "reply": "Hello, this is LLBox 👋\n\nI've found the box expecting order NOON1498703, and I'll take the delivery for you.\n\nYour one-time code\n781137\nValid until Tuesday 11:11.\n\n📍 7154 Al Jaouar, Al Faruq, Riyadh 12861\nMap: maps.google.com/?q=24.651022,46.764264\n\nI've sent photos of the street and the box below so you can find it easily.\n\nWhat to do when you arrive\n1. Find the LLBox at the address above\n2. Enter 781137 on the keypad\n3. The lid will open\n4. Place the parcel inside carefully\n5. Close the lid firmly until it clicks\n6. That's it — the delivery is marked complete automatically\n\nNo signature needed. Thanks, and drive safely.",
+     "sent_ok": true,
+     "send_error": null,
+     "outcome": "handover",
+     "photos": [
+      "Street: approach from here (QA test image)",
+      "Building (QA test image)",
+      "Front door, LLBox on the wall (QA test image)",
+      "The LLBox: enter the code on the keypad (QA test image)"
+     ],
+     "photos_sent": 4,
+     "workflow_error": null,
+     "replied_flag": true,
+     "phone": "919606742371",
+     "text": "NOON1498703",
+     "label": "driver gets code",
+     "seconds": 8.1,
+     "notify": [],
+     "dup_replies": null,
+     "executions": [
+      "8910"
+     ],
+     "failed": [],
+     "checks": [
+      "code"
+     ]
+    },
+    {
+     "execution": "8921",
+     "reply": "If it doesn't fit, please don't force the lid. Leave the parcel out of the box and close the lid.\nWhat's the order number? I'll tell the customer right away so they can come down.",
+     "sent_ok": true,
+     "send_error": null,
+     "outcome": "stuck_needs_reference",
+     "photos": [],
+     "photos_sent": 0,
+     "workflow_error": null,
+     "replied_flag": true,
+     "phone": "919606742371",
+     "text": "box is full parcel dont fit. please tell customer to come down",
+     "label": "",
+     "seconds": 6.2,
+     "notify": [],
+     "dup_replies": null,
+     "executions": [
+      "8921"
+     ],
+     "failed": [],
+     "checks": [
+      "dontForce",
+      "asksRef",
+      "noNotifyYet"
+     ]
+    },
+    {
+     "execution": "8924",
+     "reply": "Please don't force the lid — leave the parcel out of the box for NOON1498703 and close the lid.\n\nI've let the customer know in their app and they should reply shortly.\nIf you can't wait, please follow your usual process for an undelivered parcel — nothing is recorded against you.",
+     "sent_ok": true,
+     "send_error": null,
+     "outcome": "stuck_notified",
+     "photos": [],
+     "photos_sent": 0,
+     "workflow_error": null,
+     "replied_flag": true,
+     "phone": "919606742371",
+     "text": "NOON1498703",
+     "label": "sends reference",
+     "seconds": 8.0,
+     "notify": [
+      {
+       "ref": "NOON1498703",
+       "issue": "parcel_too_large",
+       "status": "200",
+       "notified": "true"
+      }
+     ],
+     "dup_replies": null,
+     "executions": [
+      "8924"
+     ],
+     "failed": [],
+     "checks": [
+      "notify1",
+      "noCode"
+     ]
+    }
+   ],
+   "auto_pass": true
+  },
+  {
+   "id": "B2",
+   "part": "confused",
+   "title": "Romanised Hindi/Urdu",
+   "before": "-",
+   "expected": "Asks for the order number (English + Arabic acceptable).",
+   "results": [
+    {
+     "execution": "8927",
+     "reply": "Could you send me the order or tracking number? It's usually printed on the parcel label.",
+     "sent_ok": true,
+     "send_error": null,
+     "outcome": "ask_reference",
+     "photos": [],
+     "photos_sent": 0,
+     "workflow_error": null,
+     "replied_flag": true,
+     "phone": "919606742371",
+     "text": "bhai parcel kahan rakhna hai box kidhar hai",
+     "label": "",
+     "seconds": 7.8,
+     "notify": [],
+     "dup_replies": null,
+     "executions": [
+      "8927"
+     ],
+     "failed": [],
+     "checks": [
+      "replied",
+      "asksRef",
+      "noCode"
+     ]
+    }
+   ],
+   "auto_pass": true
+  },
+  {
+   "id": "B8",
+   "part": "confused",
+   "title": "Shouting \"HELLO???? ANYONE THERE\"",
+   "before": "-",
+   "expected": "Short helpful reply, never silent.",
+   "results": [
+    {
+     "execution": "8930",
+     "reply": "Send me the order number from the parcel label (or a photo of the label) and I'll help.",
+     "sent_ok": true,
+     "send_error": null,
+     "outcome": "fallback",
+     "photos": [],
+     "photos_sent": 0,
+     "workflow_error": null,
+     "replied_flag": true,
+     "phone": "919606742371",
+     "text": "HELLO???? ANYONE THERE",
+     "label": "",
+     "seconds": 8.0,
+     "notify": [],
+     "dup_replies": null,
+     "executions": [
+      "8930"
+     ],
+     "failed": [],
+     "checks": [
+      "replied",
+      "noFiller"
+     ]
+    }
+   ],
+   "auto_pass": true
+  },
+  {
+   "id": "B10",
+   "part": "confused",
+   "title": "\"can i leave at door?\"",
+   "before": "-",
+   "expected": "Deliveries are completed only at the LLBox.",
+   "results": [
+    {
+     "execution": "8933",
+     "reply": "Deliveries are completed only at the LLBox. I can ask the customer for you — what's the order number?",
+     "sent_ok": true,
+     "send_error": null,
+     "outcome": "stuck_needs_reference",
+     "photos": [],
+     "photos_sent": 0,
+     "workflow_error": null,
+     "replied_flag": true,
+     "phone": "919606742371",
+     "text": "can i leave at door?",
+     "label": "",
+     "seconds": 7.9,
+     "notify": [],
+     "dup_replies": null,
+     "executions": [
+      "8933"
+     ],
+     "failed": [],
+     "checks": [
+      "boxOnly",
+      "noCode"
+     ]
+    }
+   ],
+   "auto_pass": true
+  },
+  {
+   "id": "B11",
+   "part": "confused",
+   "title": "Mixed Arabizi/English with a fresh reference",
+   "before": "-",
+   "expected": "Arabic + English handover.",
+   "results": [
+    {
+     "execution": "8936",
+     "reply": "👋 مرحبًا، أنا LLBox\n\nوجدت الصندوق الذي ينتظر الطلب رقم MIX1498714، وسأستلمه منك.\n\nرمز الاستلام الخاص بك\n448065\nصالح حتى يوم الثلاثاء الساعة 11:13\n\n📍 7154 Al Jaouar, Al Faruq, Riyadh 12861\nالخريطة: maps.google.com/?q=24.651022,46.764264\n\nأرسلت لك صور الشارع والصندوق أدناه لتسهيل الوصول.\n\nالخطوات عند الوصول\n١. ابحث عن صندوق LLBox في العنوان أعلاه\n٢. أدخل الرمز 448065 على لوحة المفاتيح\n٣. سيفتح الغطاء\n٤. ضع الطرد بالداخل بعناية\n٥. أغلق الغطاء جيدًا حتى تسمع صوت الإغلاق\n٦. وبذلك يتم تسجيل التسليم تلقائيًا\n\nلا حاجة لأي توقيع. شكرًا لك، وقيادة آمنة.\n\nأبلغت العميل عبر التطبيق ومن المتوقع أن يرد قريبًا.\nإذا لم تستطع الانتظار، يرجى اتباع الإجراء المعتاد للطرد غير المسلَّم — لن يُسجَّل شيء عليك.\n\n—————\n\nHello, this is LLBox 👋\n\nI've found the box expecting order MIX1498714, and I'll take the delivery for you.\n\nYour one-time code\n448065\nValid until Tuesday 11:13.\n\n📍 7154 Al Jaouar, Al Faruq, Riyadh 12861\nMap: maps.google.com/?q=24.651022,46.764264\n\nI've sent photos of the street and the box below so you can find it easily.\n\nWhat to do when you arrive\n1. Find the LLBox at the address above\n2. Enter 448065 on the keypad\n3. The lid will open\n4. Place the parcel inside carefully\n5. Close the lid firmly until it clicks\n6. That's it — the delivery is marked complete automatically\n\nNo signature needed. Thanks, and drive safely.\n\nI've let the customer know in their app and they should reply shortly.\nIf you can't wait, please follow your usual process for an undelivered parcel — nothing is recorded against you.",
+     "sent_ok": true,
+     "send_error": null,
+     "outcome": "stuck_notified",
+     "photos": [
+      "الشارع — Street: approach from here (QA test image)",
+      "المبنى — Building (QA test image)",
+      "المدخل — Front door, LLBox on the wall (QA test image)",
+      "الصندوق — The LLBox: enter the code on the keypad (QA test image)"
+     ],
+     "photos_sent": 4,
+     "workflow_error": null,
+     "replied_flag": true,
+     "phone": "919606742371",
+     "text": "salam bro order MIX1498714 wein al box",
+     "label": "",
+     "seconds": 8.1,
+     "notify": [
+      {
+       "ref": "MIX1498714",
+       "issue": "other",
+       "status": "200",
+       "notified": "true"
+      }
+     ],
+     "dup_replies": null,
+     "executions": [
+      "8936"
+     ],
+     "failed": [],
+     "checks": [
+      "code",
+      "arabicFirst",
+      "bilingual"
+     ]
+    }
+   ],
+   "auto_pass": true
+  },
+  {
+   "id": "B13",
+   "part": "confused",
+   "title": "\"ok thanks\" after a handover",
+   "before": "-",
+   "expected": "Short polite reply, no code, no filler.",
+   "results": [
+    {
+     "execution": "8947",
+     "reply": "You're welcome. If the box doesn't open or anything goes wrong, message me here.",
+     "sent_ok": true,
+     "send_error": null,
+     "outcome": "thanks",
+     "photos": [],
+     "photos_sent": 0,
+     "workflow_error": null,
+     "replied_flag": true,
+     "phone": "919606742371",
+     "text": "ok thanks",
+     "label": "",
+     "seconds": 6.1,
+     "notify": [],
+     "dup_replies": null,
+     "executions": [
+      "8947"
+     ],
+     "failed": [],
+     "checks": [
+      "replied",
+      "noCode",
+      "noFiller"
+     ]
+    }
+   ],
+   "auto_pass": true
+  },
+  {
+   "id": "B14",
+   "part": "confused",
+   "title": "\"I put parcel inside and closed lid\" (completion claim)",
+   "before": "-",
+   "expected": "p17 completion wording.",
+   "results": [
+    {
+     "execution": "8950",
+     "reply": "Thanks — the delivery is recorded once the code is entered and the lid is closed. Let me know if the box won't open.",
+     "sent_ok": true,
+     "send_error": null,
+     "outcome": "completion_claim",
+     "photos": [],
+     "photos_sent": 0,
+     "workflow_error": null,
+     "replied_flag": true,
+     "phone": "919606742371",
+     "text": "i put parcel inside and closed the lid, done?",
+     "label": "",
+     "seconds": 7.9,
+     "notify": [],
+     "dup_replies": null,
+     "executions": [
+      "8950"
+     ],
+     "failed": [],
+     "checks": [
+      "p17",
+      "noCode"
+     ]
+    }
+   ],
+   "auto_pass": true
+  }
+ ]
+}

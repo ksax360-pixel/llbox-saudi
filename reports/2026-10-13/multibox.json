@@ -1,0 +1,103 @@
+{
+  "suite": "multibox",
+  "passed": 12,
+  "total": 12,
+  "results": [
+    {
+      "id": "F8 register asks box",
+      "text": "register ABC123456 tomorrow",
+      "pass": true,
+      "failed": [],
+      "outcome": "ask_box",
+      "reply": "Which box is this for?\n1. Home villa (BOX-11)\n2. Office (BOX-12)\nReply with the number or the name."
+    },
+    {
+      "id": "F8 box by name",
+      "text": "the office one",
+      "pass": true,
+      "failed": [],
+      "outcome": "registered",
+      "reply": "Done ✅ ABC123456 is registered for Wednesday 14 October.\nWhen the driver arrives I'll give them a code and let you know.\n\nIs it cash on delivery? Reply \"COD\" (with the amount if you know it), \"prepaid\", or \"not sure\"."
+    },
+    {
+      "id": "F8 box by number",
+      "text": "register XYZ998877 for Sunday",
+      "pass": true,
+      "failed": [],
+      "outcome": "ask_box",
+      "reply": "Which box is this for?\n1. Home villa (BOX-11)\n2. Office (BOX-12)\nReply with the number or the name."
+    },
+    {
+      "id": "F8 box by number answer",
+      "text": "1",
+      "pass": true,
+      "failed": [],
+      "outcome": "registered",
+      "reply": "Done ✅ XYZ998877 is registered for Sunday 18 October.\nWhen the driver arrives I'll give them a code and let you know.\n\nIs it cash on delivery? Reply \"COD\" (with the amount if you know it), \"prepaid\", or \"not sure\"."
+    },
+    {
+      "id": "F8 box named up front",
+      "text": "register QWE445566 at home tomorrow",
+      "pass": true,
+      "failed": [],
+      "outcome": "registered",
+      "reply": "Done ✅ QWE445566 is registered for Wednesday 14 October.\nWhen the driver arrives I'll give them a code and let you know.\n\nIs it cash on delivery? Reply \"COD\" (with the amount if you know it), \"prepaid\", or \"not sure\"."
+    },
+    {
+      "id": "F8 guest code asks box",
+      "text": "send me a code for my cleaner",
+      "pass": true,
+      "failed": [],
+      "outcome": "ask_box",
+      "reply": "Which box is this for?\n1. Home villa (BOX-11)\n2. Office (BOX-12)\nReply with the number or the name."
+    },
+    {
+      "id": "F8 guest code office",
+      "text": "office",
+      "pass": true,
+      "failed": [],
+      "outcome": "guest_code",
+      "reply": "Here's a code to open your box (Office):\n551177\nValid for the next hour. It opens the box for whoever you share it with, and doesn't affect any delivery."
+    },
+    {
+      "id": "F8 report asks box",
+      "text": "the box has a red light and won't open",
+      "pass": true,
+      "failed": [],
+      "outcome": "ask_box",
+      "reply": "Which box is this for?\n1. Home villa (BOX-11)\n2. Office (BOX-12)\nReply with the number or the name."
+    },
+    {
+      "id": "F8 report home",
+      "text": "1",
+      "pass": true,
+      "failed": [],
+      "outcome": "issue_reported",
+      "reply": "I've reported this, reference T-77. The LLBox team will follow up, and you'll see it in your app."
+    },
+    {
+      "id": "R4 Urdu script",
+      "text": "میرے پاس پارسل ہے، باکس کہاں ہے؟",
+      "pass": true,
+      "failed": [],
+      "outcome": "ask_reference",
+      "reply": "Could you send me the order or tracking number? It's usually printed on the parcel label.\n\n—————\n\nهل يمكنك إرسال رقم الطلب أو رقم التتبع؟ عادةً يكون مطبوعًا على ملصق الطرد."
+    },
+    {
+      "id": "R4 spaced form same driver",
+      "text": "spl 88 123456",
+      "pass": true,
+      "failed": [],
+      "outcome": "handover",
+      "reply": "HANDOVER spl 88 123456\n\n—————\n\nتسليم spl 88 123456"
+    },
+    {
+      "id": "R4 same ref compact",
+      "text": "SPL88123456",
+      "pass": true,
+      "failed": [],
+      "outcome": "handover",
+      "reply": "HANDOVER SPL88123456\n\n—————\n\nتسليم SPL88123456"
+    }
+  ]
+}

@@ -38,7 +38,8 @@ export function Topbar({ onMenuClick }: TopbarProps) {
     else if (q.startsWith("lkr") || q.includes("locker")) router.push("/lockers");
     else if (q.startsWith("cus") || q.includes("customer")) router.push("/customers");
     else if (q.startsWith("drv") || q.includes("driver")) router.push("/drivers");
-    else if (q.includes("whatsapp") || q.includes("chat")) router.push("/whatsapp");
+    else if (q.includes("whatsapp") || q.includes("chat") || q.includes("conversation"))
+      router.push("/conversations");
     else if (q.includes("admin") || q.includes("user")) router.push("/admin");
     else router.push("/deliveries");
     toast("Search", { description: `Showing results related to “${search.trim()}”.`, variant: "info" });

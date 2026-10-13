@@ -1,0 +1,304 @@
+{
+  "suite": "driver-edge",
+  "passed": 33,
+  "total": 33,
+  "results": [
+    {
+      "id": "R1a",
+      "pass": true,
+      "failed": [],
+      "outcome": "box_online_retry",
+      "contact": "box_unresponsive",
+      "notify": "-",
+      "reply": "The box is responding on our side. Please try the code once more, all six digits, and wait for the beep.\nIf it still won't open, tell me and I'll let the customer know."
+    },
+    {
+      "id": "R1b",
+      "pass": true,
+      "failed": [],
+      "outcome": "box_online_retry",
+      "contact": "box_unresponsive",
+      "notify": "-",
+      "reply": "The box is responding on our side. Please try the code once more, all six digits, and wait for the beep.\nIf it still won't open, tell me and I'll let the customer know."
+    },
+    {
+      "id": "R1c",
+      "pass": true,
+      "failed": [],
+      "outcome": "parcel_size_asked",
+      "contact": "-",
+      "notify": "-",
+      "reply": "Please don't force the lid. What are the parcel's length, width and height in centimetres? For example: 60 x 40 x 30"
+    },
+    {
+      "id": "R1c2",
+      "pass": true,
+      "failed": [],
+      "outcome": "contact_released",
+      "contact": "parcel_too_large",
+      "notify": "-",
+      "reply": "Please don't force the lid. Call the customer to arrange the handover: Sara, +966511112222.\n\nI've let them know you're calling.\n\nPlease use this number for this delivery only."
+    },
+    {
+      "id": "R1d",
+      "pass": true,
+      "failed": [],
+      "outcome": "stuck_notified",
+      "contact": "-",
+      "notify": "box_full",
+      "reply": "Please don't force the lid — leave the parcel out of the box for SPL77100203 and close the lid.\n\nI've let the customer know in their app and they should reply shortly.\nIf you can't wait, please follow your usual process for an undelivered parcel — nothing is recorded against you."
+    },
+    {
+      "id": "R1e",
+      "pass": true,
+      "failed": [],
+      "outcome": "stuck_notified",
+      "contact": "-",
+      "notify": "cannot_find_box",
+      "reply": "HANDOVER SPL77100204\n\nI've let the customer know in their app and they should reply shortly.\nIf you can't wait, please follow your usual process for an undelivered parcel — nothing is recorded against you."
+    },
+    {
+      "id": "R1f",
+      "pass": true,
+      "failed": [],
+      "outcome": "stuck_notified",
+      "contact": "-",
+      "notify": "other",
+      "reply": "HANDOVER SPL77100205\n\nI can't share the customer's number for SPL77100205.\n\nI've let the customer know in their app and they should reply shortly.\nIf you can't wait, please follow your usual process for an undelivered parcel — nothing is recorded against you."
+    },
+    {
+      "id": "R1g",
+      "pass": true,
+      "failed": [],
+      "outcome": "contact_released",
+      "contact": "cod",
+      "notify": "-",
+      "reply": "This order is cash on delivery (350 SAR). The LLBox can't take cash, so please speak to the customer directly: Sara, +966511112222.\n\nI've let them know you're calling.\n\nPlease use this number for this delivery only."
+    },
+    {
+      "id": "R1h",
+      "pass": true,
+      "failed": [],
+      "outcome": "stuck_notified",
+      "contact": "-",
+      "notify": "other",
+      "reply": "HANDOVER SPL77100207\n\nI can't share the customer's number for SPL77100207.\n\nI've let the customer know in their app and they should reply shortly.\nIf you can't wait, please follow your usual process for an undelivered parcel — nothing is recorded against you."
+    },
+    {
+      "id": "R1i",
+      "pass": true,
+      "failed": [],
+      "outcome": "stuck_needs_reference",
+      "contact": "-",
+      "notify": "-",
+      "reply": "Sorry the code isn't working. What's the order number? I'll let the customer know right away."
+    },
+    {
+      "id": "R1i2",
+      "pass": true,
+      "failed": [],
+      "outcome": "box_online_retry",
+      "contact": "box_unresponsive",
+      "notify": "-",
+      "reply": "The box is responding on our side. Please try the code once more, all six digits, and wait for the beep.\nIf it still won't open, tell me and I'll let the customer know."
+    },
+    {
+      "id": "R1j",
+      "pass": true,
+      "failed": [],
+      "outcome": "box_online_retry",
+      "contact": "box_unresponsive",
+      "notify": "-",
+      "reply": "The box is responding on our side. Please try the code once more, all six digits, and wait for the beep.\nIf it still won't open, tell me and I'll let the customer know."
+    },
+    {
+      "id": "R1k",
+      "pass": true,
+      "failed": [],
+      "outcome": "stuck_notified",
+      "contact": "-",
+      "notify": "other",
+      "reply": "HANDOVER SPL77100210\n\nDeliveries are completed only at the LLBox, so please don't leave SPL77100210 with anyone else.\n\nI've let the customer know in their app and they should reply shortly.\nIf you can't wait, please follow your usual process for an undelivered parcel — nothing is recorded against you."
+    },
+    {
+      "id": "R1l",
+      "pass": true,
+      "failed": [],
+      "outcome": "stuck_notified",
+      "contact": "-",
+      "notify": "other",
+      "reply": "HANDOVER SPL77100211\n\nI can't share the customer's number for SPL77100211.\n\nI've let the customer know in their app and they should reply shortly.\nIf you can't wait, please follow your usual process for an undelivered parcel — nothing is recorded against you."
+    },
+    {
+      "id": "R3a",
+      "pass": true,
+      "failed": [],
+      "outcome": "handover",
+      "contact": "-",
+      "notify": "-",
+      "reply": "تسليم spl 88 123456\n\n—————\n\nHANDOVER spl 88 123456"
+    },
+    {
+      "id": "R3b",
+      "pass": true,
+      "failed": [],
+      "outcome": "handover",
+      "contact": "-",
+      "notify": "-",
+      "reply": "HANDOVER NQ 4455 6677 88"
+    },
+    {
+      "id": "R3c",
+      "pass": true,
+      "failed": [],
+      "outcome": "handover",
+      "contact": "-",
+      "notify": "-",
+      "reply": "HANDOVER 554433"
+    },
+    {
+      "id": "C1",
+      "pass": true,
+      "failed": [],
+      "outcome": "cod_needs_reference",
+      "contact": "-",
+      "notify": "-",
+      "reply": "I can help with a cash-on-delivery order. What's the order number?"
+    },
+    {
+      "id": "C1b",
+      "pass": true,
+      "failed": [],
+      "outcome": "cod_prepaid",
+      "contact": "-",
+      "notify": "-",
+      "reply": "The customer marked SPL77100212 as already paid, so there's no cash to collect. You can leave it in the box — send me the order number again and I'll give you the box code."
+    },
+    {
+      "id": "C2",
+      "pass": true,
+      "failed": [],
+      "outcome": "contact_opted_out",
+      "contact": "cod",
+      "notify": "-",
+      "reply": "The customer prefers not to be called directly. I've told them you need help and they should reply shortly."
+    },
+    {
+      "id": "C3",
+      "pass": true,
+      "failed": [],
+      "outcome": "contact_not_available",
+      "contact": "cod",
+      "notify": "-",
+      "reply": "I can't share customer details for that number. Please check the order number on the label and send it in full — then I can help or pass a message."
+    },
+    {
+      "id": "C4",
+      "pass": true,
+      "failed": [],
+      "outcome": "contact_limited_notified",
+      "contact": "cod",
+      "notify": "other",
+      "reply": "I can't share the customer's number for SPL77100215 right now, but I've let them know in their app that you need them. They should reply shortly."
+    },
+    {
+      "id": "C5",
+      "pass": true,
+      "failed": [],
+      "outcome": "handover",
+      "contact": "-",
+      "notify": "-",
+      "reply": "تسليم SPL77100216\n\nهذا الطلب مسجّل كدفع عند الاستلام. إذا كنت تحتاج إلى تحصيل المبلغ أولًا، أخبرني وسأوصلك بالعميل.\n\n—————\n\nHANDOVER SPL77100216\n\nThis order is marked cash on delivery. If you need to collect payment first, tell me and I will connect you with the customer."
+    },
+    {
+      "id": "D1",
+      "pass": true,
+      "failed": [],
+      "outcome": "contact_pending_review",
+      "contact": "box_unresponsive",
+      "notify": "-",
+      "reply": "Please try the code once more. I'm checking the box and I'll message you here."
+    },
+    {
+      "id": "D2",
+      "pass": true,
+      "failed": [],
+      "outcome": "box_online_retry",
+      "contact": "box_unresponsive",
+      "notify": "-",
+      "reply": "The box is responding on our side. Please try the code once more, all six digits, and wait for the beep.\nIf it still won't open, tell me and I'll let the customer know."
+    },
+    {
+      "id": "D2b",
+      "pass": true,
+      "failed": [],
+      "outcome": "stuck_notified",
+      "contact": "-",
+      "notify": "code_not_working",
+      "reply": "Sorry the code isn't working for SPL77100218.\n\nI've let the customer know in their app and they should reply shortly.\nIf you can't wait, please follow your usual process for an undelivered parcel — nothing is recorded against you."
+    },
+    {
+      "id": "D3",
+      "pass": true,
+      "failed": [],
+      "outcome": "contact_released",
+      "contact": "box_unresponsive",
+      "notify": "-",
+      "reply": "Sorry, the box isn't responding on our side either. Please call the customer to arrange the handover: Sara, +966511112222.\n\nI've let them know you're calling.\n\nPlease use this number for this delivery only."
+    },
+    {
+      "id": "O1",
+      "pass": true,
+      "failed": [],
+      "outcome": "parcel_size_asked",
+      "contact": "parcel_too_large",
+      "notify": "-",
+      "reply": "Please don't force the lid. What are the parcel's length, width and height in centimetres? For example: 60 x 40 x 30"
+    },
+    {
+      "id": "O1b",
+      "pass": true,
+      "failed": [],
+      "outcome": "parcel_fits",
+      "contact": "parcel_too_large",
+      "notify": "-",
+      "reply": "By the box's size this should fit. Try turning it onto its smallest side first.\nIf it still won't go in, tell me and I'll let the customer know."
+    },
+    {
+      "id": "E1",
+      "pass": true,
+      "failed": [],
+      "outcome": "sticker",
+      "contact": "-",
+      "notify": "-",
+      "reply": "لا أستطيع قراءة الملصقات التعبيرية. أرسل لي رقم الطلب من ملصق الطرد، أو صورة للملصق، وسأساعدك.\n\n—————\n\nI can't read stickers. Send me the order number from the parcel label, or a photo of the label, and I'll help."
+    },
+    {
+      "id": "E2",
+      "pass": true,
+      "failed": [],
+      "outcome": "ask_reference",
+      "contact": "-",
+      "notify": "-",
+      "reply": "ممتاز — سأستلمه منك.\nهل يمكنك إرسال رقم الطلب أو رقم التتبع؟ عادةً يكون مطبوعًا على ملصق الطرد، أو ظاهرًا في تطبيق التوصيل لديك.\n\n—————\n\nGreat — I'll take it for you.\nCould you send me the order or tracking number? It's usually printed on the parcel label, or shown in your delivery app."
+    },
+    {
+      "id": "E3",
+      "pass": true,
+      "failed": [],
+      "outcome": "fallback",
+      "contact": "-",
+      "notify": "-",
+      "reply": "أرسل لي رقم الطلب من ملصق الطرد (أو صورة للملصق) وسأساعدك.\n\n—————\n\nSend me the order number from the parcel label (or a photo of the label) and I'll help."
+    },
+    {
+      "id": "PRIV",
+      "pass": true,
+      "failed": [],
+      "outcome": "docs with customer phone: 0",
+      "contact": "-",
+      "notify": "-",
+      "reply": ""
+    }
+  ]
+}

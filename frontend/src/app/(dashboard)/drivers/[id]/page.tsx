@@ -13,13 +13,20 @@ import { KpiCard } from "@/components/shared/kpi-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { deliveryColumns } from "@/features/deliveries/columns";
-import { getChartData, mockDeliveries, mockDrivers } from "@/lib/mock-data";
+import { useDriver } from "@/hooks/use-api";
 import { formatNumber, formatPercent } from "@/lib/utils";
 
 export default function DriverDetailPage() {
   const params = useParams();
   const id = params.id as string;
-  const driver = mockDrivers.find((d) => d.id === id);
+  const { data, isLoading } = useDriver(id);
+  const driver = data?.driver;
+  const history = data?.deliveries || [];
+  const chart = data?.chart || [];
+
+  if (isLoading && !driver) {
+    return <div className="space-y-6" />;
+  }
 
   if (!driver) {
     return (
@@ -30,8 +37,6 @@ export default function DriverDetailPage() {
       />
     );
   }
-
-  const history = mockDeliveries.filter((d) => d.driverId === driver.id);
 
   return (
     <div className="space-y-6">
@@ -68,7 +73,7 @@ export default function DriverDetailPage() {
         <div className="lg:col-span-2">
           <AnalyticsCard
             title="Performance (Last 14 Days)"
-            data={getChartData(14)}
+            data={chart}
             type="area"
             color="#10B981"
           />

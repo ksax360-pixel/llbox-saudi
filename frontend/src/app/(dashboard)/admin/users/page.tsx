@@ -2,7 +2,7 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { Plus, Shield } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DataTable } from "@/components/shared/data-table";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
@@ -11,10 +11,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toast";
+import { apiRequest } from "@/lib/api-client";
 import { createMockUser } from "@/lib/auth";
 import { buildMockUsers } from "@/lib/mock-users";
 import { ROLE_LABELS } from "@/lib/rbac";
 import { formatDateTime } from "@/lib/utils";
+import { api } from "@/services/api";
 import type { User } from "@/types";
 
 export default function AdminUsersPage() {
@@ -23,6 +25,15 @@ export default function AdminUsersPage() {
   const [showAdd, setShowAdd] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [creating, setCreating] = useState(false);
+
+  useEffect(() => {
+    api.admin.users().then((items) => {
+      if (items.length) setUsers(items);
+    });
+  }, []);
 
   const userColumns: ColumnDef<User>[] = useMemo(
     () => [
@@ -50,23 +61,72 @@ export default function AdminUsersPage() {
     []
   );
 
-  const handleAdd = () => {
-    if (!name.trim() || !email.trim()) {
-      toast("Missing fields", { description: "Name and email are required.", variant: "error" });
+  const handleAdd = async () => {
+    if (!name.trim() || !email.trim() || !password.trim() || !mobile.trim()) {
+      toast("Missing fields", { description: "Name, email, password, and mobile are required.", variant: "error" });
       return;
     }
-    const newUser: User = {
-      ...createMockUser("customer_support"),
-      id: `user-custom-${Date.now()}`,
-      name: name.trim(),
-      email: email.trim(),
-      twoFactorEnabled: false,
-    };
-    setUsers((prev) => [newUser, ...prev]);
-    setName("");
-    setEmail("");
-    setShowAdd(false);
-    toast("User created", { description: `${newUser.name} was added.` });
+    if (password.trim().length < 6) {
+      toast("Weak password", { description: "Password must be at least 6 characters.", variant: "error" });
+      return;
+    }
+
+    setCreating(true);
+    try {
+      const data = await apiRequest<{
+        user: Record<string, unknown>;
+        otpSent?: boolean;
+        maskedPhone?: string | null;
+      }>("/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim(),
+          password: password.trim(),
+          mobile: mobile.trim(),
+        }),
+      });
+
+      const created = data.user
+        ? {
+            ...createMockUser("customer_support"),
+            id: String(data.user.id || data.user._id),
+            name: String(data.user.name || name.trim()),
+            email: String(data.user.email || email.trim()),
+            twoFactorEnabled: false,
+          }
+        : null;
+
+      if (created) {
+        setUsers((prev) => [created, ...prev]);
+      } else {
+        const refreshed = await api.admin.users();
+        if (refreshed.length) setUsers(refreshed);
+      }
+
+      setName("");
+      setEmail("");
+      setPassword("");
+      setMobile("");
+      setShowAdd(false);
+
+      toast(
+        data.otpSent ? "User created" : "User created (OTP not sent)",
+        {
+          description: data.otpSent
+            ? `Verification OTP sent on WhatsApp${data.maskedPhone ? ` to ${data.maskedPhone}` : ""}.`
+            : `${name.trim()} was added.`,
+          variant: data.otpSent ? "success" : "info",
+        }
+      );
+    } catch (err) {
+      toast("Could not create user", {
+        description: err instanceof Error ? err.message : "Please try again.",
+        variant: "error",
+      });
+    } finally {
+      setCreating(false);
+    }
   };
 
   return (
@@ -119,9 +179,31 @@ export default function AdminUsersPage() {
               <Label htmlFor="new-email">Email</Label>
               <Input id="new-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="user@llbox.com" />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="new-password">Password</Label>
+              <Input
+                id="new-password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter password"
+                autoComplete="new-password"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="new-mobile">Mobile (WhatsApp)</Label>
+              <Input
+                id="new-mobile"
+                type="tel"
+                value={mobile}
+                onChange={(e) => setMobile(e.target.value)}
+                placeholder="+966501234567"
+                autoComplete="tel"
+              />
+            </div>
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowAdd(false)}>Cancel</Button>
-              <Button onClick={handleAdd}>Create</Button>
+              <Button variant="outline" onClick={() => setShowAdd(false)} disabled={creating}>Cancel</Button>
+              <Button onClick={handleAdd} disabled={creating}>{creating ? "Creating..." : "Create"}</Button>
             </div>
           </div>
         </div>

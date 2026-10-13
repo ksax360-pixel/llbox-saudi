@@ -1,0 +1,378 @@
+{
+  "info": {
+    "_postman_id": "01a32c0a-351f-4eaa-980a-fedf7a0482a6",
+    "name": "WhatsApp Webhook Debug",
+    "description": "Collection to debug WhatsApp webhook issues - Check WABA subscription, phone number webhook override, and fix them.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "40303511"
+  },
+  "item": [
+    {
+      "name": "🔍 STEP 1 - CHECK",
+      "item": [
+        {
+          "name": "1.1 — Check WABA Subscribed Apps",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://graph.facebook.com/{{API_VERSION}}/{{WABA_ID}}/subscribed_apps?access_token={{ACCESS_TOKEN}}",
+              "protocol": "https",
+              "host": [
+                "graph",
+                "facebook",
+                "com"
+              ],
+              "path": [
+                "{{API_VERSION}}",
+                "{{WABA_ID}}",
+                "subscribed_apps"
+              ],
+              "query": [
+                {
+                  "key": "access_token",
+                  "value": "{{ACCESS_TOKEN}}"
+                }
+              ]
+            },
+            "description": "✅ Shows which app is subscribed to your WABA.\nIf empty or wrong app → your webhook won't receive messages.\nExpected: Should show YOUR app listed here."
+          },
+          "response": []
+        },
+        {
+          "name": "1.2 — Check Phone Number Webhook Override",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://graph.facebook.com/{{API_VERSION}}/{{PHONE_NUMBER_ID}}?fields=webhook_configuration&access_token={{ACCESS_TOKEN}}",
+              "protocol": "https",
+              "host": [
+                "graph",
+                "facebook",
+                "com"
+              ],
+              "path": [
+                "{{API_VERSION}}",
+                "{{PHONE_NUMBER_ID}}"
+              ],
+              "query": [
+                {
+                  "key": "fields",
+                  "value": "webhook_configuration"
+                },
+                {
+                  "key": "access_token",
+                  "value": "{{ACCESS_TOKEN}}"
+                }
+              ]
+            },
+            "description": "🚨 MOST IMPORTANT CHECK\nIf this returns a URL that is NOT your n8n URL → that is your problem.\nThe override is sending real messages somewhere else.\nExpected: Should be empty OR your n8n URL."
+          },
+          "response": []
+        },
+        {
+          "name": "1.3 — Check Phone Number Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://graph.facebook.com/{{API_VERSION}}/{{PHONE_NUMBER_ID}}?fields=display_phone_number,verified_name,quality_rating,status,name_status,webhook_configuration&access_token={{ACCESS_TOKEN}}",
+              "protocol": "https",
+              "host": [
+                "graph",
+                "facebook",
+                "com"
+              ],
+              "path": [
+                "{{API_VERSION}}",
+                "{{PHONE_NUMBER_ID}}"
+              ],
+              "query": [
+                {
+                  "key": "fields",
+                  "value": "display_phone_number,verified_name,quality_rating,status,name_status,webhook_configuration"
+                },
+                {
+                  "key": "access_token",
+                  "value": "{{ACCESS_TOKEN}}"
+                }
+              ]
+            },
+            "description": "Shows full phone number details including status and any webhook override."
+          },
+          "response": []
+        },
+        {
+          "name": "1.4 — Check App Webhook Subscriptions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://graph.facebook.com/{{API_VERSION}}/{{WABA_ID}}?fields=id,name,currency,timezone_id,message_template_namespace&access_token={{ACCESS_TOKEN}}",
+              "protocol": "https",
+              "host": [
+                "graph",
+                "facebook",
+                "com"
+              ],
+              "path": [
+                "{{API_VERSION}}",
+                "{{WABA_ID}}"
+              ],
+              "query": [
+                {
+                  "key": "fields",
+                  "value": "id,name,currency,timezone_id,message_template_namespace"
+                },
+                {
+                  "key": "access_token",
+                  "value": "{{ACCESS_TOKEN}}"
+                }
+              ]
+            },
+            "description": "Confirms your WABA details are correct."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔧 STEP 2 - FIX",
+      "item": [
+        {
+          "name": "2.1 — Re-Subscribe App to WABA (Fix)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "https://graph.facebook.com/{{API_VERSION}}/{{WABA_ID}}/subscribed_apps?access_token={{ACCESS_TOKEN}}",
+              "protocol": "https",
+              "host": [
+                "graph",
+                "facebook",
+                "com"
+              ],
+              "path": [
+                "{{API_VERSION}}",
+                "{{WABA_ID}}",
+                "subscribed_apps"
+              ],
+              "query": [
+                {
+                  "key": "access_token",
+                  "value": "{{ACCESS_TOKEN}}"
+                }
+              ]
+            },
+            "description": "🔧 Run this if Step 1.1 shows no app subscribed.\nThis re-subscribes your app to the WABA so it receives all messages."
+          },
+          "response": []
+        },
+        {
+          "name": "2.2 — Set Phone Number Webhook Override to n8n",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"override_callback_uri\": \"{{N8N_WEBHOOK_URL}}\",\n  \"verify_token\": \"{{VERIFY_TOKEN}}\"\n}"
+            },
+            "url": {
+              "raw": "https://graph.facebook.com/{{API_VERSION}}/{{PHONE_NUMBER_ID}}/webhook_configuration?access_token={{ACCESS_TOKEN}}",
+              "protocol": "https",
+              "host": [
+                "graph",
+                "facebook",
+                "com"
+              ],
+              "path": [
+                "{{API_VERSION}}",
+                "{{PHONE_NUMBER_ID}}",
+                "webhook_configuration"
+              ],
+              "query": [
+                {
+                  "key": "access_token",
+                  "value": "{{ACCESS_TOKEN}}"
+                }
+              ]
+            },
+            "description": "🔧 Forces ALL messages from this phone number to go to your n8n webhook.\nRun this if Step 1.2 shows a wrong/different URL."
+          },
+          "response": []
+        },
+        {
+          "name": "2.3 — DELETE Phone Number Webhook Override",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "https://graph.facebook.com/{{API_VERSION}}/{{PHONE_NUMBER_ID}}/webhook_configuration?access_token={{ACCESS_TOKEN}}",
+              "protocol": "https",
+              "host": [
+                "graph",
+                "facebook",
+                "com"
+              ],
+              "path": [
+                "{{API_VERSION}}",
+                "{{PHONE_NUMBER_ID}}",
+                "webhook_configuration"
+              ],
+              "query": [
+                {
+                  "key": "access_token",
+                  "value": "{{ACCESS_TOKEN}}"
+                }
+              ]
+            },
+            "description": "🗑️ Removes any phone-level webhook override.\nAfter this, messages will go to your app-level webhook (Meta Developer Console).\nRun this if Step 1.2 returns a URL that is NOT your n8n."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "✅ STEP 3 - VERIFY",
+      "item": [
+        {
+          "name": "3.1 — Confirm Webhook Override is Gone",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://graph.facebook.com/{{API_VERSION}}/{{PHONE_NUMBER_ID}}?fields=webhook_configuration&access_token={{ACCESS_TOKEN}}",
+              "protocol": "https",
+              "host": [
+                "graph",
+                "facebook",
+                "com"
+              ],
+              "path": [
+                "{{API_VERSION}}",
+                "{{PHONE_NUMBER_ID}}"
+              ],
+              "query": [
+                {
+                  "key": "fields",
+                  "value": "webhook_configuration"
+                },
+                {
+                  "key": "access_token",
+                  "value": "{{ACCESS_TOKEN}}"
+                }
+              ]
+            },
+            "description": "Run after DELETE to confirm override is removed.\nExpected result: empty webhook_configuration"
+          },
+          "response": []
+        },
+        {
+          "name": "3.2 — Confirm WABA Subscription Active",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://graph.facebook.com/{{API_VERSION}}/{{WABA_ID}}/subscribed_apps?access_token={{ACCESS_TOKEN}}",
+              "protocol": "https",
+              "host": [
+                "graph",
+                "facebook",
+                "com"
+              ],
+              "path": [
+                "{{API_VERSION}}",
+                "{{WABA_ID}}",
+                "subscribed_apps"
+              ],
+              "query": [
+                {
+                  "key": "access_token",
+                  "value": "{{ACCESS_TOKEN}}"
+                }
+              ]
+            },
+            "description": "Run after re-subscribing to confirm your app is now listed."
+          },
+          "response": []
+        },
+        {
+          "name": "3.3 — Send Test Message via API",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"messaging_product\": \"whatsapp\",\n  \"to\": \"RECIPIENT_PHONE_WITH_COUNTRY_CODE\",\n  \"type\": \"text\",\n  \"text\": {\n    \"body\": \"Test message from API - webhook debug\"\n  }\n}"
+            },
+            "url": {
+              "raw": "https://graph.facebook.com/{{API_VERSION}}/{{PHONE_NUMBER_ID}}/messages?access_token={{ACCESS_TOKEN}}",
+              "protocol": "https",
+              "host": [
+                "graph",
+                "facebook",
+                "com"
+              ],
+              "path": [
+                "{{API_VERSION}}",
+                "{{PHONE_NUMBER_ID}}",
+                "messages"
+              ],
+              "query": [
+                {
+                  "key": "access_token",
+                  "value": "{{ACCESS_TOKEN}}"
+                }
+              ]
+            },
+            "description": "Send a test message to verify everything works end-to-end.\nReplace RECIPIENT_PHONE_WITH_COUNTRY_CODE with actual number e.g. 919900XXXXXX"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "ACCESS_TOKEN",
+      "value": "PASTE_YOUR_PERMANENT_TOKEN_HERE",
+      "description": "Your Meta permanent access token"
+    },
+    {
+      "key": "WABA_ID",
+      "value": "PASTE_YOUR_WABA_ID_HERE",
+      "description": "WhatsApp Business Account ID"
+    },
+    {
+      "key": "PHONE_NUMBER_ID",
+      "value": "PASTE_YOUR_PHONE_NUMBER_ID_HERE",
+      "description": "Your WhatsApp phone number ID"
+    },
+    {
+      "key": "N8N_WEBHOOK_URL",
+      "value": "https://n8n.x-360.ai/webhook/eva2",
+      "description": "Your n8n production webhook URL"
+    },
+    {
+      "key": "VERIFY_TOKEN",
+      "value": "Test123",
+      "description": "Your webhook verify token"
+    },
+    {
+      "key": "API_VERSION",
+      "value": "v19.0",
+      "description": "Meta Graph API version"
+    }
+  ]
+}

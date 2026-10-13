@@ -1,0 +1,351 @@
+{
+  "suite": "driver-30-scenarios",
+  "passed": 43,
+  "total": 43,
+  "results": [
+    {
+      "id": 1,
+      "outcome": "opener",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "Hello 👋 You've reached LLBox.\nAre you here to drop off a delivery, or would you like to know more about LLBox?\n\n—————\n\nمرحبًا 👋 لقد وصلت إلى LLBox.\nهل أنت هنا لتسليم طلب؟ أم تود معرفة المزيد عن LLBox؟"
+    },
+    {
+      "id": 2,
+      "outcome": "already_completed",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "هذا الطلب مسجّل كَمُسلَّم بالفعل، فلا يوجد إجراء مطلوب. إذا كان الطرد لا يزال معك، أخبرني وسأتواصل مع العميل."
+    },
+    {
+      "id": 3,
+      "outcome": "not_found",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "That number isn't registered with us.\n\nCould you double-check it on the label? If it's right, the customer may not have registered this delivery yet — in that case please reach them through your delivery app."
+    },
+    {
+      "id": 4,
+      "outcome": "completion_claim",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "Thanks — the delivery is recorded once the code is entered and the lid is closed. Let me know if the box won't open."
+    },
+    {
+      "id": 5,
+      "outcome": "ask_reference",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "Could you send me the order or tracking number? It's usually printed on the parcel label."
+    },
+    {
+      "id": 6,
+      "outcome": "already_completed",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "That order is already recorded as delivered, so there's nothing to do here. If you're still holding a parcel for it, let me know and I'll contact the customer."
+    },
+    {
+      "id": 7,
+      "outcome": "ask_reference",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "هل يمكنك إرسال رقم الطلب أو رقم التتبع؟ عادةً يكون مطبوعًا على ملصق الطرد.\n\n—————\n\nCould you send me the order or tracking number? It's usually printed on the parcel label."
+    },
+    {
+      "id": "8a",
+      "outcome": "already_completed",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "هذا الطلب مسجّل كَمُسلَّم بالفعل، فلا يوجد إجراء مطلوب. إذا كان الطرد لا يزال معك، أخبرني وسأتواصل مع العميل.\n\n—————\n\nThat order is already recorded as delivered, so there's nothing to do here. If you're still holding a parcel for it, let me know and I'll contact the customer."
+    },
+    {
+      "id": "8b",
+      "outcome": "already_completed",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "هذا الطلب مسجّل كَمُسلَّم بالفعل، فلا يوجد إجراء مطلوب. إذا كان الطرد لا يزال معك، أخبرني وسأتواصل مع العميل.\n\n—————\n\nThat order is already recorded as delivered, so there's nothing to do here. If you're still holding a parcel for it, let me know and I'll contact the customer."
+    },
+    {
+      "id": "9a",
+      "outcome": "cancelled",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "قام العميل بإلغاء هذا الطلب. يرجى إعادة الطرد وفق الإجراء المعتاد لديك.\n\n—————\n\nThe customer cancelled that delivery. Please return the parcel through your usual process."
+    },
+    {
+      "id": "9b",
+      "outcome": "cancelled",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "قام العميل بإلغاء هذا الطلب. يرجى إعادة الطرد وفق الإجراء المعتاد لديك.\n\n—————\n\nThe customer cancelled that delivery. Please return the parcel through your usual process."
+    },
+    {
+      "id": "9c",
+      "outcome": "expired",
+      "notify": "reference_expired",
+      "pass": true,
+      "failed": [],
+      "reply": "هذا الطلب كان مسجّلًا لدينا، لكن مدة الحجز انتهت.\n\nأبلغت العميل عبر التطبيق ليعيد تسجيله. امنحه لحظة ثم أرسل لي الرقم مرة أخرى.\n\n—————\n\nThat delivery was registered with us, but the hold period has ended.\n\nI've let the customer know in their app so they can register it again. Give them a moment, then send me the number once more."
+    },
+    {
+      "id": "10a",
+      "outcome": "too_short",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "يبدو هذا الرقم قصيرًا جدًا. هل يمكنك إرسال الرقم كاملًا كما هو على الملصق؟\n\n—————\n\nThat looks too short. Could you send the full number from the label?"
+    },
+    {
+      "id": "10b",
+      "outcome": "not_found",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "هذا الرقم غير مسجّل لدينا.\n\nهل يمكنك التأكد منه على الملصق؟ إذا كان صحيحًا، فربما لم يسجّل العميل هذا الطلب بعد — في هذه الحالة يرجى التواصل معه عبر تطبيق التوصيل لديك.\n\n—————\n\nThat number isn't registered with us.\n\nCould you double-check it on the label? If it's right, the customer may not have registered this delivery yet — in that case please reach them through your delivery app."
+    },
+    {
+      "id": "10c",
+      "outcome": "cancelled",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "قام العميل بإلغاء هذا الطلب. يرجى إعادة الطرد وفق الإجراء المعتاد لديك.\n\n—————\n\nThe customer cancelled that delivery. Please return the parcel through your usual process."
+    },
+    {
+      "id": 11,
+      "outcome": "already_completed",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "هذا الطلب مسجّل كَمُسلَّم بالفعل، فلا يوجد إجراء مطلوب. إذا كان الطرد لا يزال معك، أخبرني وسأتواصل مع العميل."
+    },
+    {
+      "id": 12,
+      "outcome": "already_completed",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "هذا الطلب مسجّل كَمُسلَّم بالفعل، فلا يوجد إجراء مطلوب. إذا كان الطرد لا يزال معك، أخبرني وسأتواصل مع العميل.\n\n—————\n\nThat order is already recorded as delivered, so there's nothing to do here. If you're still holding a parcel for it, let me know and I'll contact the customer."
+    },
+    {
+      "id": 13,
+      "outcome": "manipulation_refused",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "Could you send me the order or tracking number? It's usually printed on the parcel label."
+    },
+    {
+      "id": 14,
+      "outcome": "human_request",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "I'm LLBox's automated assistant and can't connect you to a person here. Send the order number and I'll help."
+    },
+    {
+      "id": 15,
+      "outcome": "already_completed",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "هذا الطلب مسجّل كَمُسلَّم بالفعل، فلا يوجد إجراء مطلوب. إذا كان الطرد لا يزال معك، أخبرني وسأتواصل مع العميل.\n\n—————\n\nThat order is already recorded as delivered, so there's nothing to do here. If you're still holding a parcel for it, let me know and I'll contact the customer."
+    },
+    {
+      "id": 16,
+      "outcome": "stuck_notified",
+      "notify": "code_not_working",
+      "pass": true,
+      "failed": [],
+      "reply": "Sorry the code isn't working for SPL-99-554433.\n\nI've let the customer know in their app and they should reply shortly.\nIf you can't wait, please follow your usual process for an undelivered parcel — nothing is recorded against you."
+    },
+    {
+      "id": 17,
+      "outcome": "stuck_needs_reference",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "If it doesn't fit, please don't force the lid. Leave the parcel out of the box and close the lid.\nWhat's the order number? I'll tell the customer right away so they can come down."
+    },
+    {
+      "id": "17b",
+      "outcome": "stuck_notified",
+      "notify": "parcel_too_large",
+      "pass": true,
+      "failed": [],
+      "reply": "Please don't force the lid — leave the parcel out of the box for SPL-99-554433 and close the lid.\n\nI've let the customer know in their app and they should reply shortly.\nIf you can't wait, please follow your usual process for an undelivered parcel — nothing is recorded against you."
+    },
+    {
+      "id": "17c",
+      "outcome": "stuck_needs_reference",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "If it doesn't fit, please don't force the lid. Leave the parcel out of the box and close the lid.\nWhat's the order number? I'll tell the customer right away so they can come down."
+    },
+    {
+      "id": "17d",
+      "outcome": "human_request",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "I'm LLBox's automated assistant and can't connect you to a person here. Send the order number and I'll help."
+    },
+    {
+      "id": "17e",
+      "outcome": "cancelled",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "The customer cancelled that delivery. Please return the parcel through your usual process."
+    },
+    {
+      "id": 18,
+      "outcome": "owner_claim_refused",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "حفاظًا على الأمان لا أستطيع مشاركة عنوان أو رقم هاتف أو رمز في هذه المحادثة. إذا كنت تسلّم طردًا، أرسل لي رقم الطلب من الملصق.\nإذا كان هذا صندوقك، يرجى مراسلتي من رقم الواتساب المرتبط بحساب LLBox الخاص بك."
+    },
+    {
+      "id": 19,
+      "outcome": "stuck_notified",
+      "notify": "parcel_too_large",
+      "pass": true,
+      "failed": [],
+      "reply": "هذا الطلب مسجّل كَمُسلَّم بالفعل، فلا يوجد إجراء مطلوب. إذا كان الطرد لا يزال معك، أخبرني وسأتواصل مع العميل.\n\nالرجاء عدم الضغط على الغطاء — اترك طرد الطلب NQL-77-554433 خارج الصندوق وأغلق الغطاء.\n\nأبلغت العميل عبر التطبيق ومن المتوقع أن يرد قريبًا.\nإذا لم تستطع الانتظار، يرجى اتباع الإجراء المعتاد للطرد غير المسلَّم — لن يُسجَّل شيء عليك.\n\n—————\n\nThat order is already recorded as delivered, so there's nothing to do here. If you're still holding a parcel for it, let me know and I'll contact the customer.\n\nPlease don't force the lid — leave the parcel out of the box for NQL-77-554433 and close the lid.\n\nI've let the customer know in their app and they should reply shortly.\nIf you can't wait, please follow your usual process for an undelivered parcel — nothing is recorded against you."
+    },
+    {
+      "id": 20,
+      "outcome": "already_completed",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "That order is already recorded as delivered, so there's nothing to do here. If you're still holding a parcel for it, let me know and I'll contact the customer.\n\n—————\n\nهذا الطلب مسجّل كَمُسلَّم بالفعل، فلا يوجد إجراء مطلوب. إذا كان الطرد لا يزال معك، أخبرني وسأتواصل مع العميل."
+    },
+    {
+      "id": 21,
+      "outcome": "already_matched",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "Another driver already has the code for that order.\nIf that's not you, please check the number on your label — it may belong to a different parcel.\n\nI see two numbers. Let's do HARDTWO002 now — then send me HARDTHR003."
+    },
+    {
+      "id": 22,
+      "outcome": "stuck_needs_reference",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "I can't share the customer's number, but I can message them for you. What's the order number?"
+    },
+    {
+      "id": 23,
+      "outcome": "stuck_needs_reference",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "Deliveries are completed only at the LLBox. I can ask the customer for you — what's the order number?"
+    },
+    {
+      "id": 24,
+      "outcome": "stuck_needs_reference",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "I can't share the customer's number, but I can message them for you. What's the order number?"
+    },
+    {
+      "id": 25,
+      "outcome": "already_matched",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "Another driver already has the code for that order.\nIf that's not you, please check the number on your label — it may belong to a different parcel."
+    },
+    {
+      "id": 26,
+      "outcome": "stuck_notified",
+      "notify": "reference_expired",
+      "pass": true,
+      "failed": [],
+      "reply": "That delivery was registered with us, but the hold period has ended.\n\nI've let the customer know in their app and they should reply shortly.\nIf you can't wait, please follow your usual process for an undelivered parcel — nothing is recorded against you."
+    },
+    {
+      "id": "27",
+      "outcome": "expired",
+      "notify": "reference_expired",
+      "pass": true,
+      "failed": [],
+      "reply": "هذا الطلب كان مسجّلًا لدينا، لكن مدة الحجز انتهت.\n\nأبلغت العميل عبر التطبيق ليعيد تسجيله. امنحه لحظة ثم أرسل لي الرقم مرة أخرى.\n\n—————\n\nThat delivery was registered with us, but the hold period has ended.\n\nI've let the customer know in their app so they can register it again. Give them a moment, then send me the number once more."
+    },
+    {
+      "id": "28a",
+      "outcome": "fallback",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "Send me the order number from the parcel label (or a photo of the label) and I'll help."
+    },
+    {
+      "id": "28b",
+      "outcome": "junk_fallback",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "Send me the order number from the parcel label (or a photo of the label) and I'll help."
+    },
+    {
+      "id": "28c",
+      "outcome": "fallback",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "أرسل لي رقم الطلب من ملصق الطرد (أو صورة للملصق) وسأساعدك.\n\n—————\n\nSend me the order number from the parcel label (or a photo of the label) and I'll help."
+    },
+    {
+      "id": "28d",
+      "outcome": "fallback",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "أرسل لي رقم الطلب من ملصق الطرد (أو صورة للملصق) وسأساعدك.\n\n—————\n\nSend me the order number from the parcel label (or a photo of the label) and I'll help."
+    },
+    {
+      "id": "29a",
+      "outcome": "expired",
+      "notify": "reference_expired",
+      "pass": true,
+      "failed": [],
+      "reply": "That delivery was registered with us, but the hold period has ended.\n\nThere's nobody I can notify about it from here, so please contact the customer through your delivery app."
+    },
+    {
+      "id": "29b",
+      "outcome": "expired",
+      "notify": "reference_expired",
+      "pass": true,
+      "failed": [],
+      "reply": "That delivery was registered with us, but the hold period has ended.\n\nI've let the customer know in their app so they can register it again. Give them a moment, then send me the number once more."
+    },
+    {
+      "id": 30,
+      "outcome": "cancelled",
+      "notify": "-",
+      "pass": true,
+      "failed": [],
+      "reply": "The customer cancelled that delivery. Please return the parcel through your usual process."
+    }
+  ]
+}

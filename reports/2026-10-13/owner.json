@@ -1,0 +1,285 @@
+{
+  "suite": "owner",
+  "passed": 28,
+  "total": 33,
+  "results": [
+    {
+      "id": "F3 greeting",
+      "text": "Hi",
+      "pass": true,
+      "failed": [],
+      "outcome": "owner_greeting",
+      "reply": "Hello Khalid 👋 This is LLBox.\nYou have a parcel waiting to be collected.\n\nI can help you:\n1. Register a new delivery\n2. Check what's on the way\n3. Send you a code to open your box\n4. Check your box (parcel inside, battery, online)\n5. Which number to give couriers\n6. Report a problem with your box or a parcel\n\nWhat would you like to do? Reply with a number or just tell me."
+    },
+    {
+      "id": "F7 menu digit",
+      "text": "2",
+      "pass": false,
+      "failed": [
+        "out",
+        "list"
+      ],
+      "outcome": "list_empty",
+      "reply": "Nothing is on its way at the moment. Would you like to register a delivery you're expecting?"
+    },
+    {
+      "id": "F1 cancel unknown never registers",
+      "text": "cancel ZZZ99887766",
+      "pass": true,
+      "failed": [],
+      "outcome": "cancel_not_possible",
+      "reply": "I can't find ZZZ99887766 among the deliveries on your box, so nothing was cancelled. Please check the number."
+    },
+    {
+      "id": "F2 register asks day",
+      "text": "please register X360T22743A",
+      "pass": true,
+      "failed": [],
+      "outcome": "register_ask_day",
+      "reply": "Thanks. Roughly when are you expecting X360T22743A? Today, tomorrow, or a date — or just say you're not sure."
+    },
+    {
+      "id": "F2 day answer",
+      "text": "in 9 days",
+      "pass": true,
+      "failed": [],
+      "outcome": "registered",
+      "reply": "Done ✅ X360T22743A is registered for Thursday 22 October.\nWhen the driver arrives I'll give them a code and let you know.\n\nIs it cash on delivery? Reply \"COD\" (with the amount if you know it), \"prepaid\", or \"not sure\"."
+    },
+    {
+      "id": "F3-COD not sure",
+      "text": "not sure, i'll check",
+      "pass": true,
+      "failed": [],
+      "outcome": "payment_unknown",
+      "reply": "No problem — I've left the payment as unknown."
+    },
+    {
+      "id": "F8 status by ref",
+      "text": "where is X360T22743A",
+      "pass": true,
+      "failed": [],
+      "outcome": "reference_status",
+      "reply": "X360T22743A is registered for Thursday 22 October and waiting for the driver."
+    },
+    {
+      "id": "F1 cancel by ref confirms",
+      "text": "cancel X360T22743A",
+      "pass": true,
+      "failed": [],
+      "outcome": "cancel_confirm",
+      "reply": "Cancel X360T22743A (expected Thursday 22 October)? Reply \"yes\" to confirm."
+    },
+    {
+      "id": "F1 cancel yes",
+      "text": "yes",
+      "pass": true,
+      "failed": [],
+      "outcome": "cancelled",
+      "reply": "Cancelled ✅ X360T22743A won't be accepted at your box."
+    },
+    {
+      "id": "F2 stale ref not reused",
+      "text": "tomorrow",
+      "pass": true,
+      "failed": [],
+      "outcome": "register_ask_ref",
+      "reply": "Sure — what's the order or tracking number?"
+    },
+    {
+      "id": "F12 three refs",
+      "text": "X360T22743B X360T22743C X360T22743D",
+      "pass": false,
+      "failed": [
+        "out"
+      ],
+      "outcome": "registered",
+      "reply": "Done ✅ X360T22743B is registered for Wednesday 14 October.\n\nDone ✅ X360T22743C is registered for Wednesday 14 October.\n\nDone ✅ X360T22743D is registered for Wednesday 14 October.\n\nWhen a driver arrives I'll give them a code and let you know.\n\nIf any of these is cash on delivery, send its order number with \"COD\" and the amount."
+    },
+    {
+      "id": "F10 relative day",
+      "text": "in 10 days",
+      "pass": false,
+      "failed": [
+        "out",
+        "all"
+      ],
+      "outcome": "register_ask_ref",
+      "reply": "Sure — what's the order or tracking number?"
+    },
+    {
+      "id": "F3-COD for all",
+      "text": "COD 200 riyal for all of them",
+      "pass": false,
+      "failed": [
+        "out",
+        "all"
+      ],
+      "outcome": "owner_not_understood",
+      "reply": "Sorry, I didn't quite get that.\n\nI can help you:\n1. Register a new delivery\n2. Check what's on the way\n3. Cancel one you no longer expect\n4. Send you a code to open your box\n5. Check your box (parcel inside, battery, online)\n6. Which number to give couriers\n7. Report a problem with your box or a parcel\n\nWhat would you like to do? Reply with a number or just tell me."
+    },
+    {
+      "id": "F6 cancel several",
+      "text": "cancel X360T22743B, X360T22743C and X360T22743D",
+      "pass": true,
+      "failed": [],
+      "outcome": "cancel_confirm",
+      "reply": "Cancel X360T22743B, X360T22743C, X360T22743D? Reply \"yes\" to confirm."
+    },
+    {
+      "id": "F6 cancel no",
+      "text": "no",
+      "pass": true,
+      "failed": [],
+      "outcome": "cancel_kept",
+      "reply": "OK, nothing cancelled. I've kept X360T22743B, X360T22743C, X360T22743D."
+    },
+    {
+      "id": "F10 past day",
+      "text": "register X360T22743E for yesterday",
+      "pass": true,
+      "failed": [],
+      "outcome": "register_day_past",
+      "reply": "Monday 12 October has already passed. When are you expecting X360T22743E? Today, tomorrow, or a date — or just say you're not sure."
+    },
+    {
+      "id": "F11 >120 days",
+      "text": "register X360T22743E in 200 days",
+      "pass": true,
+      "failed": [],
+      "outcome": "register_day_too_far",
+      "reply": "Saturday 1 May is more than 120 days away, and I can only register deliveries up to 120 days ahead. When are you expecting X360T22743E? Or just say you're not sure."
+    },
+    {
+      "id": "F9 box number",
+      "text": "What number do I give Noon?",
+      "pass": true,
+      "failed": [],
+      "outcome": "box_number",
+      "reply": "Give couriers this WhatsApp number: +1 507 710 7553\nWhen a driver messages it with the order number, they get your box location and a one-time code. Use your box's address as the delivery address, and register the order here so the box expects it."
+    },
+    {
+      "id": "F13 box status",
+      "text": "is my box ok? anything inside?",
+      "pass": true,
+      "failed": [],
+      "outcome": "box_status",
+      "reply": "Yes — there's a parcel waiting in your box now.\nIt is about 20% full.\nThe box hasn't checked in since Wednesday 7 October, 17:16, battery 80%, so it may be offline. If it isn't working, tell me and I'll report it."
+    },
+    {
+      "id": "F14 guest code",
+      "text": "send me a code for my cleaner",
+      "pass": true,
+      "failed": [],
+      "outcome": "guest_code",
+      "reply": "Here's a code to open your box:\n482913\nValid for the next hour. It opens the box for whoever you share it with, and doesn't affect any delivery."
+    },
+    {
+      "id": "F15 replacement code",
+      "text": "the driver says the code doesn't work for NQ4455667788",
+      "pass": false,
+      "failed": [
+        "code",
+        "linked"
+      ],
+      "outcome": "code_refused",
+      "reply": "I couldn't create a code for NQ4455667788: it's already delivered. If someone needs to open the box, say \"guest code\"."
+    },
+    {
+      "id": "F16 report issue",
+      "text": "the box has a red light and won't open",
+      "pass": true,
+      "failed": [],
+      "outcome": "issue_reported",
+      "reply": "I've reported this, reference T-1. The LLBox team will follow up, and you'll see it in your app."
+    },
+    {
+      "id": "F16 duplicate report",
+      "text": "the box has a red light and it will not open at all",
+      "pass": true,
+      "failed": [],
+      "outcome": "report_duplicate",
+      "reply": "I've already reported this a few minutes ago (reference T-1). The team will follow up."
+    },
+    {
+      "id": "F17 STOP",
+      "text": "STOP",
+      "pass": true,
+      "failed": [],
+      "outcome": "preferences_optOut",
+      "reply": "Done — I won't send you any messages unless you write to me first. Reply START any time to turn them back on."
+    },
+    {
+      "id": "F17 START",
+      "text": "START",
+      "pass": true,
+      "failed": [],
+      "outcome": "preferences_optIn",
+      "reply": "Done — messages from LLBox are back on."
+    },
+    {
+      "id": "F17 no driver calls",
+      "text": "I don't want drivers to call me",
+      "pass": true,
+      "failed": [],
+      "outcome": "preferences_driverContactOff",
+      "reply": "Done — drivers won't be given your number. If a driver is stuck, I'll let you know in the app instead."
+    },
+    {
+      "id": "F18 account change",
+      "text": "please delete my account",
+      "pass": true,
+      "failed": [],
+      "outcome": "account_request_passed",
+      "reply": "I can't delete your account from here, so I've passed your request to the LLBox team (reference T-1) and someone will come back to you."
+    },
+    {
+      "id": "F19 theft",
+      "text": "my parcel was stolen from the box",
+      "pass": true,
+      "failed": [],
+      "outcome": "issue_reported",
+      "reply": "I've reported this, reference T-1. The LLBox team will follow up, and you'll see it in your app.\n\nIf you believe a parcel was stolen, please also contact the store or courier so they can open a claim."
+    },
+    {
+      "id": "F4 self driver escape",
+      "text": "I am the driver delivering to this box",
+      "pass": true,
+      "failed": [],
+      "outcome": "owner_never_driver",
+      "reply": "This number is registered as a box owner. Drivers write from their own number. How can I help with your box?"
+    },
+    {
+      "id": "F5 wat can you do",
+      "text": "wat can you do",
+      "pass": true,
+      "failed": [],
+      "outcome": "owner_menu",
+      "reply": "I can help you:\n1. Register a new delivery\n2. Check what's on the way\n3. Cancel one you no longer expect\n4. Send you a code to open your box\n5. Check your box (parcel inside, battery, online)\n6. Which number to give couriers\n7. Report a problem with your box or a parcel\n\nWhat would you like to do? Reply with a number or just tell me."
+    },
+    {
+      "id": "F3 Arabic greeting",
+      "text": "مرحبا",
+      "pass": true,
+      "failed": [],
+      "outcome": "owner_greeting",
+      "reply": "مرحبًا Khalid 👋 معك LLBox.\nلديك 3 طلبات نشطة، وطرد بانتظار الاستلام في الصندوق.\n\nيمكنني مساعدتك في:\n1. تسجيل طلب جديد\n2. معرفة الطلبات القادمة\n3. إلغاء طلب لم تعد تنتظره\n4. إرسال رمز لفتح صندوقك\n5. حالة صندوقك (طرد بالداخل، البطارية، الاتصال)\n6. الرقم الذي تعطيه لشركات التوصيل\n7. الإبلاغ عن مشكلة في الصندوق أو طرد\n\nكيف أساعدك؟ أرسل رقم الخيار أو اكتب طلبك."
+    },
+    {
+      "id": "F7 Arabic list",
+      "text": "وش جاي هالأسبوع",
+      "pass": true,
+      "failed": [],
+      "outcome": "listed",
+      "reply": "هذه الطلبات القادمة إلى صندوقك:\n• X360T22743D — متوقع يوم الأربعاء 14 أكتوبر\n• X360T22743C — متوقع يوم الأربعاء 14 أكتوبر\n• X360T22743B — متوقع يوم الأربعاء 14 أكتوبر\n\nهل تود إلغاء أي منها؟"
+    },
+    {
+      "id": "thanks",
+      "text": "thanks!",
+      "pass": true,
+      "failed": [],
+      "outcome": "thanks",
+      "reply": "You're welcome. Message me any time — say \"menu\" to see what I can do."
+    }
+  ]
+}

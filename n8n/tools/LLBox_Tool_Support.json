@@ -1,0 +1,148 @@
+{
+  "name": "LLBox Tool \u2014 Support Escalation",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "workflowInputs",
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "phone",
+              "type": "string"
+            },
+            {
+              "name": "correlationId",
+              "type": "string"
+            },
+            {
+              "name": "actorType",
+              "type": "string"
+            },
+            {
+              "name": "customerId",
+              "type": "string"
+            },
+            {
+              "name": "driverId",
+              "type": "string"
+            },
+            {
+              "name": "intent",
+              "type": "string"
+            },
+            {
+              "name": "issueSummary",
+              "type": "string"
+            },
+            {
+              "name": "backendUrl",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "b5f431fa-5c4c-49c9-8fac-effecc478ce2",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst j = $json;\nconst ticket = {\n  ticket_id: 'TCK-' + j.correlationId,\n  correlation_id: j.correlationId,\n  actor_type: j.actorType || 'unknown',\n  actor_reference: j.customerId || j.driverId || j.phone,\n  channel: 'whatsapp',\n  intent: j.intent || 'SUPPORT',\n  issue_summary: (j.issueSummary || 'User requested human support').slice(0, 300),\n  priority: 'P3'\n};\nreturn [{ json: { ...j, ticket, toolUrl: j.backendUrl + '/api/tools/create-support-ticket', toolBody: JSON.stringify({ correlationId: j.correlationId, ticket }) } }];\n"
+      },
+      "id": "950da703-7902-4d30-aa08-3e86e2bf39b9",
+      "name": "Build Ticket",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.toolUrl }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.toolBody }}",
+        "options": {
+          "timeout": 25000
+        }
+      },
+      "id": "66e314ec-86d5-4dae-bd86-70044ed0ce03",
+      "name": "Create Ticket",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        300
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst j = $json;\nconst ok = j.success === true || (j.statusCode && j.statusCode < 400);\nreturn [{ json: { success: Boolean(ok), tool: 'llbox_support', authorization: 'ALLOWED', ticketId: j.ticket?.ticket_id, message: ok ? 'Support ticket created' : 'Could not create ticket', data: j.data || {} } }];\n"
+      },
+      "id": "6b0d2472-0d24-4aa9-ab46-5069fb06876c",
+      "name": "Format Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Build Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Ticket": {
+      "main": [
+        [
+          {
+            "node": "Create Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Ticket": {
+      "main": [
+        [
+          {
+            "node": "Format Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": [
+    {
+      "name": "LLBox Tool"
+    }
+  ],
+  "pinData": {}
+}

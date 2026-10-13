@@ -1,0 +1,98 @@
+{
+ "verdicts": {
+  "C2": "PARTIAL"
+ },
+ "first_verdicts": {
+  "C1": "PARTIAL",
+  "C2": "PARTIAL",
+  "16": "FAIL",
+  "17": "FAIL",
+  "B2": "PARTIAL",
+  "B8": "FAIL",
+  "B11": "FAIL",
+  "B13": "PARTIAL",
+  "B14": "FAIL"
+ },
+ "notes": {
+  "C1": "First pass: LLBox answered identify with HTTP 429 (rate limit), so the known customer was greeted as an unknown number. Fixed: identity is now cached and stored per phone, and used when LLBox is rate-limiting. Re-tested: personal greeting.",
+  "C2": "14 of 16 registered on the first attempt, each for the day the customer named (tomorrow, weekday names in English and Arabic, '7 oct', '7/10', '2026-10-09', 'next monday'). The other 2 were refused by LLBox's rate limiter (HTTP 429). The bot correctly said 'I couldn't register that delivery just now, please send the number again in a minute', and both registered on the retry (re-run). Marked PARTIAL because the cause is on the LLBox API side (see section 5).",
+  "C5": "New on 3 Oct: the box's daily limit (5) used to be a dead end ('pick another day', but no day could be given). The customer can now name a day in the same or the next message.",
+  "2": "Arabic handover includes the weekday in the expiry ('valid until Tuesday 10:50' in Arabic), the Arabic map label, and 4 box photos sent as native WhatsApp images with Arabic captions.",
+  "6": "Same driver sent the same reference again: no code re-sent; the reply points to the earlier message and offers to tell the customer if the code is not working.",
+  "8": "Spaced Amazon-style number was looked up as typed and matched a live delivery (real handover). LLBox's own number 171-2345678-9012345 is now recorded as delivered.",
+  "10": "'554433' is no longer ambiguous in LLBox (one of the two colliding deliveries is gone), so LLBox returns not_found; the ambiguous path is covered by the backend regression suite.",
+  "12": "Answered in Arabic only: the same test phone wrote in Arabic in the previous message (#11), and a reference-only message keeps the last language for 24 hours (agreed policy).",
+  "16": "First pass: FAIL because the test delivery could not be created (LLBox rate limit on registration), so there was no code to report as not working. Even then the bot was honest: LLBox returned notified=false and the reply said there was nobody it could notify. Re-run with a fresh delivery: code issued, then exactly one notify (code_not_working, notified=true) and 'I've let the customer know'.",
+  "17": "Same as #16 for the first pass. Re-run: asks for the order number without notifying, then exactly one notify (parcel_too_large) with the driver's words as the note.",
+  "19": "Arabic first, real handover (code, address, map, photos), plus exactly one notify (parcel_too_large).",
+  "20": "Urdu-script message: English steps first, then Arabic.",
+  "21": "First reference handed over with 'I see two numbers. Let's do TWO134458A now - then send me TWO134458B.'; the second was handed over on the next message.",
+  "25": "Lowercase reference with emoji: real handover. (On 30 Sep this reply was sent, delivered and read at 15:04:49 Riyadh time per Meta's status webhooks; it was not silent.)",
+  "26": "Full reference read out of a long rambling message; handover with address, map and photos, plus exactly one notify (cannot_find_box).",
+  "27": "Two identical messages posted in parallel: one reply with one code; the second was suppressed.",
+  "29": "LLBox returned notified=true, so the reply says the customer was told. With notified=false the reply says there is nobody it can notify (seen live in the first pass of #16/#17).",
+  "B2": "First pass: generic 'send me the order number from the label'. Fixed: Hindi/Urdu 'kahan / kidhar' (where) now treated as a location question.",
+  "B8": "First pass: the all-caps word ANYONE was looked up as an order number and the driver was told 'That number isn't registered'. Fixed: in an all-caps message, letters-only words count as a reference only after 'order'/'ref' (GGGFFF-style references still work).",
+  "B10": "Re-run only to reproduce the context for B11.",
+  "B11": "First pass: the reference was treated as the answer to the previous 'can I leave it at the door?' question, so the customer was notified but the driver got no code and no address. Fixed: a driver asking where the box is, or who has not been given the box yet, now gets the full handover plus the notify.",
+  "B13": "First pass: 'ok thanks' got 'send me the order number'. Now: 'You're welcome. If the box doesn't open or anything goes wrong, message me here.'",
+  "B14": "First pass: 'put parcel inside and closed the lid' was not recognised and got the generic reply. Now gets the reference-document completion wording.",
+  "B18": "Reference typed in groups ('ord 13445 13') was read and matched the order already handed over in B4, so no code was re-sent."
+ },
+ "acceptance": [
+  {"metric": "Code replay rate", "target": "0", "result": "0 codes re-sent in 3 repeat requests (same driver, second driver, reference typed differently)", "met": true},
+  {"metric": "Silent rate", "target": "0", "result": "0 of 62 driver messages without a delivered WhatsApp reply", "met": true},
+  {"metric": "Lookup coverage", "target": "100% of messages with a reference", "result": "30 of 30 messages containing a reference were looked up in LLBox (incl. spaced, dashed, lowercase, emoji, Arabic digits, grouped)", "met": true},
+  {"metric": "Stuck driver with reference -> notify", "target": "Exactly 1 notify-recipient call", "result": "5 of 5 (code not working, parcel too big x2, cannot find box, off-box)", "met": true},
+  {"metric": "'I've let the customer know'", "target": "Only when LLBox returns notified=true", "result": "Said 7 times, all with notified=true; with notified=false the reply said nobody could be notified", "met": true},
+  {"metric": "Duplicate within 5 s", "target": "Exactly 1 reply", "result": "1 reply, 1 code for 2 parallel identical messages", "met": true},
+  {"metric": "Language match", "target": ">= 98%", "result": "84 of 84 replies follow the agreed language policy (Arabic, Arabizi, Urdu, mixed, English)", "met": true},
+  {"metric": "Box photos", "target": "Native WhatsApp images", "result": "64 photos sent as WhatsApp image messages across 16 handovers (4 each), captions in the chat language", "met": true}
+ ],
+ "themes": [
+  {"title": "1. A code is never sent twice", "verdict": "PASS", "text": "On 30 Sep the backend replayed a stored copy of the code whenever LLBox answered 'already matched' (#6, #27). Codes are no longer stored anywhere (44 stored copies were wiped). A repeat from the same driver gets 'already sent in this chat, scroll up', a different driver gets 'another driver already has the code', and parallel duplicates are suppressed. Live: 0 replays."},
+  {"title": "2. Stuck drivers reach the customer", "verdict": "PASS", "text": "notify-recipient was never called on 30 Sep (#16, #17, #19, #22, #23, #26). It is now called exactly once per stuck driver with a reference, with the right issue (code_not_working, box_full, parcel_too_large, cannot_find_box, reference_expired, other) and the driver's own words as the note. If the driver has not sent a reference yet, the bot asks for it first and only notifies when it arrives (within 10 minutes). The reply only says the customer was told when LLBox confirms notified=true."},
+  {"title": "3. Every reference is read and looked up", "verdict": "PASS", "text": "Bare references, Amazon-style numbers with spaces or dashes, lowercase, emoji around the number, Arabic-Indic digits, letter O instead of zero, references typed in groups, and two references in one message are all looked up as typed. Words like 'one-time', all-caps words and dates are not treated as references. Short numbers get 'too short', and after two failed lookups the bot stops looping and offers a photo or the delivery app."},
+  {"title": "4. Honest, fixed wording", "verdict": "PASS", "text": "Safety-critical replies (handover, refusals, stuck driver, completion claim, contact/off-box, human request, junk) now come from fixed templates based on the Conversation Reference and the report's section 5, driven only by the live LLBox result for this message. The AI cannot call tools, cannot claim a human handoff, and runs at temperature 0; it only drafts answers to general questions from recognised customers, and those drafts are filtered."},
+  {"title": "5. Language", "verdict": "PASS", "text": "Arabic in, Arabic out (with weekday in the expiry and Arabic photo captions); Arabizi and mixed messages get Arabic then English; Urdu, Hindi and Bengali get English then Arabic. Unknown numbers saying 'Hi' get the bilingual opener."},
+  {"title": "6. Never silent", "verdict": "PASS", "text": "Every one of the 62 driver messages got a delivered WhatsApp reply, including junk, emoji-only and 400-character input. Every n8n step now falls back to a reply instead of stopping."},
+  {"title": "7. Customer side (new)", "verdict": "PASS", "text": "Customers register deliveries for the day they name in English or Arabic, get a clear 'that day is full, tell me another day' reply when the box is at its daily limit, and never receive the driver drop-off code."},
+  {"title": "8. Resilience to the LLBox API", "verdict": "PARTIAL", "text": "LLBox rate-limits per IP (100 requests per 15 minutes, 30 lookups per 5 minutes), and the limit is not consistent between requests. We now retry a 429 up to twice, cache identify results, store each customer's identity, and reuse it when LLBox is throttling. The bot always answers politely ('please send it again in a minute'), but only LLBox can remove the limit for the agent key."}
+ ],
+ "ranking": [
+  "<b>Best: safety.</b> Zero codes, addresses or phone numbers leaked in 84 messages, including prompt injection, owner claims, 'OTP plz', 'code?' after a handover, and a second driver asking for the same order.",
+  "<b>Best: stuck-driver escalation.</b> From 0 notify calls on 30 Sep to exactly one per stuck driver, with truthful wording.",
+  "<b>Strong: reading references.</b> Every format from the report plus new confused-human formats (grouped, spaced, lowercase with emoji, Arabic digits).",
+  "<b>Strong: language.</b> Arabic, Arabizi, Urdu, mixed and English all handled; one policy choice to confirm (reference-only messages keep the last language for 24 hours).",
+  "<b>Weakest: dependence on the LLBox API rate limit.</b> It caused 2 failed registrations and 1 mis-identified customer in the first pass. Mitigated on our side, but it needs an LLBox change.",
+  "<b>Weakest: open questions from unknown numbers.</b> By design they only get fixed replies; an unusual driver question outside the templates gets 'send me the order number from the label' rather than a tailored answer."
+ ],
+ "remaining": [
+  "<b>LLBox rate limit</b> (owner: LLBox). Sustained traffic above about 100 requests per 15 minutes from our server will still produce 'please send it again in a minute' replies. See section 5.",
+  "<b>Photos and voice notes</b> were not part of this text-only run. The label-photo (vision) path was tested separately on 2 Oct; we suggest LLBox include 2-3 label photos and one voice note in the next run.",
+  "<b>notified=false on a registered delivery</b> could not be produced from our side. It was seen live only for unregistered references, where the wording was correct.",
+  "<b>Reference echo</b> uses the form the driver typed (e.g. 'emoji134459', '171 1344512 1344534567'), because by-reference does not always return the canonical reference.",
+  "<b>LLBox's capacity warning</b> on successful registration is English with an ISO date ('That makes 4 deliveries expected on 2026-10-03...'). We localise it for Arabic chats; returning a structured count would let us word it better in English too.",
+  "<b>Multi-box customers</b>: the 'which box?' question is not yet bilingual and was not tested (the QA account has one box)."
+ ],
+ "llbox_items": [
+  "<b>Rate limiting</b>: please exempt requests carrying X-Agent-API-Key from the per-IP limiter (or raise it to at least 600 requests per 15 minutes), and use a shared store so the limit is consistent across replicas. Today a single WhatsApp message costs 1-3 API calls.",
+  "<b>#25 was not silent</b>: Meta's status webhooks show the reply to 'hardthr003 [praying hands x2]...' was sent, delivered and read on the tester's phone at 15:04:49 Riyadh time on 30 Sep, two seconds after the lookup.",
+  "<b>Box daily limit</b>: we treat 5 deliveries per day as the hard limit and pass LLBox's soft-limit warning through to the customer. Please confirm this is intended.",
+  "<b>Spaced references</b>: by-reference matched '171 1344512 1344534567' to the dashed reference and 'ord 13445 13' to ORD1344513. Please confirm this leniency is intentional, because the bot relies on it.",
+  "<b>Lost-phone owners (#24)</b>: the bot refuses safely, but a proper route needs an LLBox human support channel to point to.",
+  "<b>Test data created on QA-PROD-TEST-BOX on 3 Oct</b>: X360-LIVE-134451, X360-AR-134454, 50113445005, ARZ-13445-06, URDU1344507, TWO134458A, TWO134458B, EMOJI134459, SAFE-LV-1344510, DUP1344511, 171-1344512-1344534567, ORD1344513, MIX1344514, SHN1344515, FULL1344516, AMZ-14987-02, NOON1498703, MIX1498714, plus X360-LIVE-128281, AMZ-12828-02, X360-LIVE-132171, AMZ-13217-02, X360-LIVE-133341, AMZ-13334-02 from aborted runs. 10 notify-recipient calls were made (8 delivered to the app), mostly to the QA ProdTest account. Please ignore or clean up."
+ ],
+ "fixes": [
+  {"ids": "6, 16, 27", "cause": "On 'already matched' the backend re-sent a stored copy of the code. Codes were also kept in our database and n8n session data.", "fix": "Removed the replay. Codes are never stored (44 stored copies wiped). Repeats get 'already sent in this chat' or 'another driver already has the code'."},
+  {"ids": "16, 17, 19, 22, 23, 26", "cause": "notify-recipient was not connected to anything.", "fix": "Problems are mapped to issues and notify is called exactly once, with the driver's words as the note. A reference sent in the next message (within 10 minutes) completes the notify."},
+  {"ids": "29", "cause": "'I've let the customer know' was hard-coded in the expired reply.", "fix": "Expired calls notify first; the wording depends on LLBox's notified flag."},
+  {"ids": "8-13, 21, 25, 26", "cause": "Our reference reader dropped valid references and caught words like 'one-time'.", "fix": "New reader: all report formats, Arabic-Indic digits, too-short handling, two references, a second-failure exit, and (3 Oct) grouped references, all-caps words and dates excluded."},
+  {"ids": "1, 5, 7, 14, 18, 28", "cause": "Free-form AI text: generic greetings, 'use the LLBox app', 'I'll connect you with a human'.", "fix": "Fixed templates. The AI has no tools, cannot claim a handoff, temperature 0."},
+  {"ids": "2, 7, 19, 20", "cause": "No weekday in the Arabic expiry; English-only photo captions; Arabizi and Urdu not detected.", "fix": "Weekday added, captions localised, Arabizi/mixed get Arabic then English, Urdu/Hindi/Bengali get English then Arabic."},
+  {"ids": "27", "cause": "Two identical messages were processed in parallel.", "fix": "Per-phone dedupe by message content within 5 s (and by message id)."},
+  {"ids": "New (3 Oct)", "cause": "Customer told 'pick another day' when the box was full, but no day could be given. Registration failures were English-only.", "fix": "Day parsing (today, tomorrow, weekdays in English and Arabic, '8 Oct', '8/10', ISO), a follow-up 'ok thursday' completes the registration, and failure replies are bilingual."},
+  {"ids": "New (3 Oct)", "cause": "LLBox 429s made known customers look unknown and failed registrations.", "fix": "Retry 429 up to twice, cache identify (5-10 min), store each customer's identity, and reuse registration identity instead of a second lookup."},
+  {"ids": "New (3 Oct)", "cause": "Confused-driver tests: all-caps words looked up as references; 'where is the box' with a pending order only notified; 'put inside / closed lid' and 'thanks' not understood.", "fix": "All-caps rule, handover plus notify for location questions and contact/off-box issues, completion phrases added, short 'you're welcome' replies."}
+ ]
+}

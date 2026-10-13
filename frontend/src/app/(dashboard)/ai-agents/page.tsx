@@ -5,13 +5,18 @@ import { DataTable } from "@/components/shared/data-table";
 import { KpiCard } from "@/components/shared/kpi-card";
 import { PageHeader } from "@/components/shared/page-header";
 import { voiceCallColumns } from "@/features/ai-agents/columns";
-import { mockVoiceCalls } from "@/lib/mock-data";
+import { useVoiceCalls } from "@/hooks/use-api";
 import { formatNumber, formatPercent } from "@/lib/utils";
 
 export default function AIAgentsPage() {
-  const callsToday = mockVoiceCalls.filter(
+  const { data: calls = [] } = useVoiceCalls();
+  const callsToday = calls.filter(
     (c) => new Date(c.createdAt).toDateString() === new Date().toDateString()
-  ).length || 47;
+  ).length;
+  const resolved = calls.filter((c) => c.outcome === "resolved").length;
+  const escalated = calls.filter((c) => c.outcome === "escalated" || c.outcome === "failed").length;
+  const resolutionRate = calls.length ? (resolved / calls.length) * 100 : 0;
+  const escalationRate = calls.length ? (escalated / calls.length) * 100 : 0;
 
   return (
     <div className="space-y-6">
@@ -22,14 +27,14 @@ export default function AIAgentsPage() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard title="Calls Today" value={formatNumber(callsToday)} change={12.3} icon={Phone} />
-        <KpiCard title="Calls This Month" value={formatNumber(mockVoiceCalls.length)} change={8.5} icon={Phone} />
-        <KpiCard title="Resolution Rate" value={formatPercent(87.4)} change={2.1} icon={TrendingUp} />
-        <KpiCard title="Escalation Rate" value={formatPercent(12.6)} change={-1.3} icon={Bot} />
+        <KpiCard title="Calls This Month" value={formatNumber(calls.length)} change={8.5} icon={Phone} />
+        <KpiCard title="Resolution Rate" value={formatPercent(resolutionRate)} change={2.1} icon={TrendingUp} />
+        <KpiCard title="Escalation Rate" value={formatPercent(escalationRate)} change={-1.3} icon={Bot} />
       </div>
 
       <DataTable
         columns={voiceCallColumns}
-        data={mockVoiceCalls}
+        data={calls}
         searchPlaceholder="Search call logs..."
         exportFilename="voice-calls"
       />

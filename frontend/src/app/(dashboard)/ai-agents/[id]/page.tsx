@@ -11,15 +11,19 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/toast";
-import { mockVoiceCalls } from "@/lib/mock-data";
+import { useVoiceCall } from "@/hooks/use-api";
 import { formatDateTime, formatDuration } from "@/lib/utils";
 
 export default function VoiceCallDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const { toast } = useToast();
-  const call = mockVoiceCalls.find((c) => c.id === id);
+  const { data: call, isLoading } = useVoiceCall(id);
   const [notes, setNotes] = useState("");
+
+  if (isLoading && !call) {
+    return <div className="space-y-6" />;
+  }
 
   if (!call) {
     return (
@@ -59,8 +63,8 @@ export default function VoiceCallDetailPage() {
               variant="outline"
               size="sm"
               onClick={() =>
-                toast("Call escalated", {
-                  description: "Escalated to a human supervisor.",
+                toast("Escalate", {
+                  description: "This option will be available tomorrow.",
                   variant: "info",
                 })
               }

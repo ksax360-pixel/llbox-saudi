@@ -24,6 +24,11 @@ const userSchema = new mongoose.Schema(
       minlength: 6,
       select: false,
     },
+    mobile: {
+      type: String,
+      trim: true,
+      default: '',
+    },
     role: {
       type: String,
       enum: Object.values(ROLES),
@@ -60,6 +65,7 @@ userSchema.methods.toSafeObject = function toSafeObject() {
     id: this._id,
     name: this.name,
     email: this.email,
+    mobile: this.mobile || '',
     role: this.role,
     isActive: this.isActive,
     lastLoginAt: this.lastLoginAt,

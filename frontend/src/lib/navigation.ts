@@ -1,9 +1,9 @@
+import type { LucideIcon } from "lucide-react";
 import type { Permission } from "@/types";
 import {
   BarChart3,
   Bot,
   LayoutDashboard,
-  MessageCircle,
   MessageSquare,
   Package,
   Shield,
@@ -11,7 +11,6 @@ import {
   Users,
   Warehouse,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 
 export interface NavItem {
   title: string;
@@ -28,7 +27,6 @@ export const mainNavItems: NavItem[] = [
   { title: "Drivers", href: "/drivers", icon: Truck, permissions: ["drivers.manage"] },
   { title: "Customers", href: "/customers", icon: Users, permissions: ["customers.manage", "customers.view"] },
   { title: "AI Agents", href: "/ai-agents", icon: Bot, permissions: ["ai_agents.manage", "ai_agents.view"] },
-  { title: "WhatsApp", href: "/whatsapp", icon: MessageCircle, permissions: ["ai_agents.manage", "ai_agents.view", "conversations.view"] },
   { title: "Conversations", href: "/conversations", icon: MessageSquare, permissions: ["conversations.manage", "conversations.view"] },
   { title: "Analytics", href: "/analytics", icon: BarChart3, permissions: ["analytics.view"] },
 ];

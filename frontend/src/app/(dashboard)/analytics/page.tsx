@@ -6,11 +6,20 @@ import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/components/ui/toast";
-import { getChartData } from "@/lib/mock-data";
+import { useAnalytics } from "@/hooks/use-api";
 import { exportToCSV } from "@/lib/utils";
 
 export default function AnalyticsPage() {
   const { toast } = useToast();
+  const { data } = useAnalytics();
+  const charts = data?.charts || {};
+  const stats = [
+    { label: "Voice Resolution", value: data?.stats?.voiceResolution || "0%" },
+    { label: "WhatsApp Resolution", value: data?.stats?.whatsappResolution || "0%" },
+    { label: "Escalation Rate", value: data?.stats?.escalationRate || "0%" },
+    { label: "Cost Per Conversation", value: data?.stats?.costPerConversation || "0.00 SAR" },
+  ];
+  const empty: { date: string; value: number }[] = [];
 
   return (
     <div className="space-y-8">
@@ -24,7 +33,7 @@ export default function AnalyticsPage() {
               size="sm"
               onClick={() => {
                 exportToCSV(
-                  getChartData(30) as unknown as Record<string, unknown>[],
+                  (charts.deliveries || empty) as unknown as Record<string, unknown>[],
                   "analytics-export"
                 );
                 toast("CSV exported", { description: "Analytics data downloaded." });
@@ -51,22 +60,17 @@ export default function AnalyticsPage() {
       <section>
         <h2 className="mb-4 text-lg font-semibold text-[#111827]">Operations Analytics</h2>
         <div className="grid gap-4 lg:grid-cols-2">
-          <AnalyticsCard title="Deliveries Per Day" data={getChartData(30)} type="area" />
-          <AnalyticsCard title="Success Rate" data={getChartData(30)} type="line" color="#10B981" valueFormatter={(v) => `${v}%`} />
-          <AnalyticsCard title="Locker Utilization" data={getChartData(30)} type="bar" />
-          <AnalyticsCard title="Peak Hours" data={getChartData(24)} type="bar" color="#F59E0B" />
+          <AnalyticsCard title="Deliveries Per Day" data={charts.deliveries || empty} type="area" />
+          <AnalyticsCard title="Success Rate" data={charts.successRate || empty} type="line" color="#10B981" valueFormatter={(v) => `${v}%`} />
+          <AnalyticsCard title="Locker Utilization" data={charts.utilization || empty} type="bar" />
+          <AnalyticsCard title="Peak Hours" data={charts.peakHours || empty} type="bar" color="#F59E0B" />
         </div>
       </section>
 
       <section>
         <h2 className="mb-4 text-lg font-semibold text-[#111827]">AI Analytics</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-4">
-          {[
-            { label: "Voice Resolution", value: "87.4%" },
-            { label: "WhatsApp Resolution", value: "91.2%" },
-            { label: "Escalation Rate", value: "12.6%" },
-            { label: "Cost Per Conversation", value: "2.40 SAR" },
-          ].map((stat) => (
+          {stats.map((stat) => (
             <Card key={stat.label}>
               <CardContent className="pt-6">
                 <p className="text-sm text-[#6B7280]">{stat.label}</p>
@@ -76,16 +80,16 @@ export default function AnalyticsPage() {
           ))}
         </div>
         <div className="grid gap-4 lg:grid-cols-2">
-          <AnalyticsCard title="Voice Resolution Rate" data={getChartData(30)} type="line" color="#8B5CF6" valueFormatter={(v) => `${v}%`} />
-          <AnalyticsCard title="WhatsApp Resolution Rate" data={getChartData(30)} type="line" color="#25D366" valueFormatter={(v) => `${v}%`} />
+          <AnalyticsCard title="Voice Resolution Rate" data={charts.voiceResolution || empty} type="line" color="#8B5CF6" valueFormatter={(v) => `${v}%`} />
+          <AnalyticsCard title="WhatsApp Resolution Rate" data={charts.whatsappResolution || empty} type="line" color="#25D366" valueFormatter={(v) => `${v}%`} />
         </div>
       </section>
 
       <section>
         <h2 className="mb-4 text-lg font-semibold text-[#111827]">Business Analytics</h2>
         <div className="grid gap-4 lg:grid-cols-2">
-          <AnalyticsCard title="Revenue" data={getChartData(12)} type="bar" color="#10B981" valueFormatter={(v) => `${v}K SAR`} />
-          <AnalyticsCard title="Deliveries Per Customer" data={getChartData(30)} type="area" color="#3B82F6" />
+          <AnalyticsCard title="Revenue" data={charts.revenue || empty} type="bar" color="#10B981" valueFormatter={(v) => `${v}K SAR`} />
+          <AnalyticsCard title="Deliveries Per Customer" data={charts.deliveriesPerCustomer || empty} type="area" color="#3B82F6" />
         </div>
       </section>
     </div>

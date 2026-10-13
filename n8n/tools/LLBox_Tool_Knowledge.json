@@ -1,0 +1,68 @@
+{
+  "name": "LLBox Tool \u2014 Knowledge",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "workflowInputs",
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "knowledgeContent",
+              "type": "string"
+            },
+            {
+              "name": "knowledgeVersion",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "ed250398-f97a-49c2-9293-77c6be238b57",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst kb = $json.knowledgeContent || '';\nreturn [{ json: {\n  success: Boolean(kb),\n  tool: 'llbox_knowledge',\n  authorization: 'ALLOWED',\n  verified: true,\n  message: kb || 'No approved knowledge loaded.',\n  knowledgeVersion: $json.knowledgeVersion || 'none',\n  data: { content: kb }\n} }];\n"
+      },
+      "id": "6dba25cd-df03-4f50-b238-7be49da65264",
+      "name": "Return Knowledge",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Return Knowledge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": [
+    {
+      "name": "LLBox Tool"
+    }
+  ],
+  "pinData": {}
+}

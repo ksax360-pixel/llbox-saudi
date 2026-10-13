@@ -12,13 +12,26 @@ const conversationRoutes = require('./routes/conversation.routes');
 const knowledgeRoutes = require('./routes/knowledge.routes');
 const promptRoutes = require('./routes/prompt.routes');
 const settingsRoutes = require('./routes/settings.routes');
+const whatsappRoutes = require('./routes/whatsapp.routes');
+const dashboardRoutes = require('./routes/dashboard.routes');
+const deliveryRoutes = require('./routes/delivery.routes');
+const lockerRoutes = require('./routes/locker.routes');
+const customerRoutes = require('./routes/customer.routes');
+const driverRoutes = require('./routes/driver.routes');
+const voiceRoutes = require('./routes/voice.routes');
+const { analyticsRouter, adminRouter } = require('./routes/crm.routes');
 
 const app = express();
+app.set('trust proxy', 1);
 
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+  })
+);
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || '*',
+    origin: (process.env.CORS_ORIGIN || '*').split(',').map((s) => s.trim()),
     credentials: true,
   })
 );
@@ -53,6 +66,15 @@ app.use('/api/conversations', conversationRoutes);
 app.use('/api/knowledge', knowledgeRoutes);
 app.use('/api/prompts', promptRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/whatsapp', whatsappRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/deliveries', deliveryRoutes);
+app.use('/api/lockers', lockerRoutes);
+app.use('/api/customers', customerRoutes);
+app.use('/api/drivers', driverRoutes);
+app.use('/api/voice-calls', voiceRoutes);
+app.use('/api/analytics', analyticsRouter);
+app.use('/api/admin', adminRouter);
 
 app.use(notFound);
 app.use(errorHandler);

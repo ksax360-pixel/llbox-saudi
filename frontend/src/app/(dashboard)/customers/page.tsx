@@ -6,10 +6,11 @@ import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { customerColumns } from "@/features/customers/columns";
-import { mockCustomers } from "@/lib/mock-data";
+import { useCustomers } from "@/hooks/use-api";
 
 export default function CustomersPage() {
   const { toast } = useToast();
+  const { data: customers = [] } = useCustomers();
 
   return (
     <div className="space-y-6">
@@ -31,7 +32,7 @@ export default function CustomersPage() {
       />
       <DataTable
         columns={customerColumns}
-        data={mockCustomers}
+        data={customers}
         searchPlaceholder="Search customers..."
         exportFilename="customers"
         pageSize={15}

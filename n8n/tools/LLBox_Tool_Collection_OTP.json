@@ -1,0 +1,428 @@
+{
+  "name": "LLBox Tool \u2014 Collection OTP",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "workflowInputs",
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "action",
+              "type": "string"
+            },
+            {
+              "name": "orderReference",
+              "type": "string"
+            },
+            {
+              "name": "intent",
+              "type": "string"
+            },
+            {
+              "name": "phone",
+              "type": "string"
+            },
+            {
+              "name": "correlationId",
+              "type": "string"
+            },
+            {
+              "name": "messageId",
+              "type": "string"
+            },
+            {
+              "name": "trustLevel",
+              "type": "string"
+            },
+            {
+              "name": "actorType",
+              "type": "string"
+            },
+            {
+              "name": "customerId",
+              "type": "string"
+            },
+            {
+              "name": "driverId",
+              "type": "string"
+            },
+            {
+              "name": "backendUrl",
+              "type": "string"
+            },
+            {
+              "name": "rateLimitOtpPerHour",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "51826731-eec1-48cd-a682-92da652ac8a4",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c967ce5c-6099-401e-a8e7-30c2b656585f",
+              "name": "toolName",
+              "value": "llbox_collection_otp",
+              "type": "string"
+            },
+            {
+              "id": "cf60f88f-1df2-4120-85be-2ace4eb3c761",
+              "name": "action",
+              "value": "={{ $json.action || 'request_collection_otp' }}",
+              "type": "string"
+            },
+            {
+              "id": "d1fb0159-3670-404a-86d1-57046f027aed",
+              "name": "orderReference",
+              "value": "={{ $json.orderReference || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "c4805b8d-8210-461b-8ceb-b8df3e0b803e",
+              "name": "intent",
+              "value": "={{ $json.intent || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "2aed3133-455a-42fb-92e9-5ba9f4922f72",
+              "name": "phone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "f7119935-8ca3-4d34-8322-e91445515006",
+              "name": "correlationId",
+              "value": "={{ $json.correlationId }}",
+              "type": "string"
+            },
+            {
+              "id": "87a0074c-9a67-4742-8f17-98a796d1de49",
+              "name": "messageId",
+              "value": "={{ $json.messageId || 'tool' }}",
+              "type": "string"
+            },
+            {
+              "id": "f285eaa6-c3a7-4bab-9236-3db9596e249b",
+              "name": "trustLevel",
+              "value": "={{ $json.trustLevel || 'L0' }}",
+              "type": "string"
+            },
+            {
+              "id": "8537690d-fbe1-4b0a-b916-a1829d7e1d1d",
+              "name": "actorType",
+              "value": "={{ $json.actorType || 'unknown' }}",
+              "type": "string"
+            },
+            {
+              "id": "da000dcf-9f52-4aa0-a99f-0bfcf753ef8a",
+              "name": "customerId",
+              "value": "={{ $json.customerId || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "edea2fc7-f0b7-4123-ab4e-e90727c27b92",
+              "name": "driverId",
+              "value": "={{ $json.driverId || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "b33aae02-23f0-4a41-87f9-567b5587dbd9",
+              "name": "backendUrl",
+              "value": "={{ $json.backendUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "ac73ce6d-de6d-489a-84cc-409f9d6caa0a",
+              "name": "rateLimitOtpPerHour",
+              "value": "={{ $json.rateLimitOtpPerHour || '3' }}",
+              "type": "string"
+            },
+            {
+              "id": "60c68b0c-33c9-49d5-bf36-9f4e47c06d7f",
+              "name": "implemented",
+              "value": "true",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2bc5a912-cf31-44db-987b-929e4bee8ed6",
+      "name": "Set Tool Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst j = $json;\nconst d = { action: j.action, order_reference: j.orderReference || '', intent: j.intent || '' };\nconst staticData = $getWorkflowStaticData('global');\nstaticData.sessions = staticData.sessions || {};\nconst session = staticData.sessions[j.phone] || {};\nconst orderReference = j.orderReference || session.orderReference || d.order_reference || '';\n\nconst MIN_TRUST = {\n  none: 'L0', chat: 'L0', ask_name: 'L0', save_name: 'L0',\n  get_customer_profile: 'L2', get_delivery_status: 'L1', get_delivery_details: 'L1',\n  get_customer_locker: 'L1', get_locker_location: 'L1', get_locker_availability: 'L1',\n  register_delivery: 'L0', start_collection: 'L1', get_collection_status: 'L1',\n  request_collection_otp: 'L0',\n  create_support_ticket: 'L0', create_complaint: 'L1', create_privacy_request: 'L1',\n  request_account_recovery: 'L1',\n  verify_driver: 'L1', verify_delivery: 'L1', get_assigned_delivery: 'L1',\n  get_assigned_locker: 'L1', verify_agent_location: 'L1', request_delivery_access: 'L0',\n  resolve_delivery_access: 'L0', check_otp_status: 'L1', record_delivery_failure: 'L1',\n  request_second_attempt: 'L1', create_driver_support_case: 'L1',\n  create_security_incident: 'L0', create_operations_incident: 'L1',\n  human_escalation: 'L0'\n};\nconst RANK = { L0: 0, L1: 1, L2: 2, L3: 3, L4: 4, L5: 5 };\nconst ESCALATE_ONLY = new Set(['request_account_recovery', 'create_security_incident']);\nconst ORDER_REF_ACTIONS = new Set([\n  'resolve_delivery_access','request_delivery_access','request_collection_otp',\n  'register_delivery','get_delivery_status','get_delivery_details','get_locker_location'\n]);\n\nconst action = j.action;\nconst requiredTrust = MIN_TRUST[action];\nlet allowed = false;\nlet denyReason = null;\n\nif (requiredTrust === undefined) denyReason = 'ACTION_NOT_ALLOWLISTED';\nelse if (ESCALATE_ONLY.has(action)) denyReason = 'REQUIRES_HUMAN_STEP_UP';\nelse if (ORDER_REF_ACTIONS.has(action) && !orderReference && action !== 'register_delivery') denyReason = 'MISSING_ORDER_REFERENCE';\nelse if (RANK[j.trustLevel || 'L0'] < RANK[requiredTrust]) {\n  if (ORDER_REF_ACTIONS.has(action) && orderReference) allowed = true;\n  else denyReason = 'INSUFFICIENT_TRUST_LEVEL';\n} else allowed = true;\n\nif (allowed && (action === 'request_collection_otp' || action === 'resolve_delivery_access')) {\n  const attempts = session.otpAttempts || 0;\n  const limit = parseInt(j.rateLimitOtpPerHour || '3', 10);\n  if (attempts >= limit) { allowed = false; denyReason = 'OTP_TOO_MANY_ATTEMPTS'; }\n  else {\n    session.otpAttempts = attempts + 1;\n    if (orderReference) session.orderReference = orderReference;\n    staticData.sessions[j.phone] = session;\n  }\n}\n\nconst idempotencyKey = `${j.correlationId}:${j.messageId}:${action}`;\nreturn [{ json: { ...j, lastOrderReference: orderReference, gate: { allowed, denyReason, action, requiredTrust: requiredTrust || 'L4', idempotencyKey } } }];\n"
+      },
+      "id": "847be1e9-0da2-4de6-9161-9d11a7d90c96",
+      "name": "Safety Gate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5fa76341-1b63-4b31-b847-1063e8427771",
+              "leftValue": "={{ $json.gate.allowed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c386a1a3-d78c-49f9-aa8b-8d6db41b8316",
+      "name": "Gate Passed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cf9c407a-e040-4656-ad27-04d536727ae7",
+              "leftValue": "={{ $json.implemented }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "659d5d6f-87d3-4239-a1bb-93cb48ef805e",
+      "name": "Implemented?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst j = $json;\nconst body = {\n  correlationId: j.correlationId,\n  idempotencyKey: j.gate.idempotencyKey,\n  phone: j.phone,\n  whatsappPhone: j.phone,\n  customerId: j.customerId || null,\n  driverId: j.driverId || null,\n  orderReference: j.lastOrderReference || j.orderReference || null,\n  intent: j.intent || ''\n};\nreturn [{ json: { ...j, toolUrl: j.backendUrl + '/api/tools/resolve-delivery', toolBody: JSON.stringify(body) } }];\n"
+      },
+      "id": "50baf109-676e-4489-b4c5-b8dafbf09c42",
+      "name": "Build Backend Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.toolUrl }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.toolBody }}",
+        "options": {
+          "timeout": 25000
+        }
+      },
+      "id": "30c0e028-388d-45a7-94ef-c3f4170b2b0f",
+      "name": "Call LLBox Backend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1440,
+        200
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst j = $json;\nconst gate = j.gate || {};\nif (!gate.allowed) {\n  return [{ json: { success: false, tool: j.toolName, authorization: 'DENIED', errorCode: gate.denyReason, verified: false, message: gate.denyReason, orderReference: j.lastOrderReference || j.orderReference || null } }];\n}\nconst res = j;\nconst data = res.data || {};\nconst success = res.success === true || (j.statusCode && j.statusCode < 400 && res.success !== false);\nreturn [{ json: {\n  success: Boolean(success),\n  tool: j.toolName,\n  authorization: 'ALLOWED',\n  verified: true,\n  orderReference: j.lastOrderReference || j.orderReference || data.orderReference || null,\n  deliveryStatus: data.status || data.deliveryStatus || null,\n  locker: data.boxCode || data.locker || null,\n  address: data.address || null,\n  googleMaps: data.googleMaps || null,\n  otpAvailable: Boolean(data.otp),\n  otp: data.otp || null,\n  otpExpiresAt: data.otpExpiresAt || null,\n  errorCode: success ? null : (res.errorCode || j.toolErrorCategory || 'BACKEND_ERROR'),\n  message: res.message || (success ? 'OK' : 'Backend request failed'),\n  data\n} }];\n"
+      },
+      "id": "966c370e-32c6-404c-9339-530c5501889c",
+      "name": "Format Tool Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst j = $json;\nreturn [{ json: { success: false, tool: j.toolName, authorization: 'DENIED', errorCode: j.gate.denyReason, verified: false, message: j.gate.denyReason, orderReference: j.orderReference || null } }];\n"
+      },
+      "id": "abd8b91e-8903-40dc-a2b6-f54f57f90a62",
+      "name": "Format Denied",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nreturn [{ json: { success: false, tool: $json.toolName, authorization: 'NOT_IMPLEMENTED', errorCode: 'TOOL_NOT_IMPLEMENTED', verified: false, message: 'This capability is not wired yet. Escalate to support if needed.' } }];\n"
+      },
+      "id": "7d1b7086-a04b-4019-a975-47ad489abdba",
+      "name": "Not Implemented",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        520
+      ]
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Tool Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Tool Context": {
+      "main": [
+        [
+          {
+            "node": "Safety Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Safety Gate": {
+      "main": [
+        [
+          {
+            "node": "Gate Passed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gate Passed?": {
+      "main": [
+        [
+          {
+            "node": "Implemented?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Denied",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Implemented?": {
+      "main": [
+        [
+          {
+            "node": "Build Backend Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Not Implemented",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Backend Request": {
+      "main": [
+        [
+          {
+            "node": "Call LLBox Backend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call LLBox Backend": {
+      "main": [
+        [
+          {
+            "node": "Format Tool Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": [
+    {
+      "name": "LLBox Tool"
+    }
+  ],
+  "pinData": {}
+}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Ban, MessageSquare, Users } from "lucide-react";
 import { DetailHeader } from "@/components/shared/detail-header";
 import { DetailList, DetailRow } from "@/components/shared/detail-list";
@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { deliveryColumns } from "@/features/deliveries/columns";
-import { mockConversations, mockCustomers, mockDeliveries } from "@/lib/mock-data";
+import { useCustomer } from "@/hooks/use-api";
 import { formatDate, formatDateTime } from "@/lib/utils";
 import type { Customer } from "@/types";
 
@@ -22,9 +22,19 @@ export default function CustomerDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const { toast } = useToast();
-  const found = mockCustomers.find((c) => c.id === id);
-  const [customer, setCustomer] = useState<Customer | undefined>(found);
+  const { data, isLoading } = useCustomer(id);
+  const [customer, setCustomer] = useState<Customer | undefined>();
   const [confirmSuspend, setConfirmSuspend] = useState(false);
+  const deliveries = data?.deliveries || [];
+  const conversations = data?.conversations || [];
+
+  useEffect(() => {
+    if (data?.customer) setCustomer(data.customer);
+  }, [data]);
+
+  if (isLoading && !customer) {
+    return <div className="space-y-6" />;
+  }
 
   if (!customer) {
     return (
@@ -35,9 +45,6 @@ export default function CustomerDetailPage() {
       />
     );
   }
-
-  const deliveries = mockDeliveries.filter((d) => d.customerId === customer.id);
-  const conversations = mockConversations.filter((c) => c.customerId === customer.id).slice(0, 8);
 
   return (
     <div className="space-y-6">

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Power, RotateCcw, Warehouse, Wrench } from "lucide-react";
 import { DetailHeader } from "@/components/shared/detail-header";
 import { DetailList, DetailRow } from "@/components/shared/detail-list";
@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { deliveryColumns } from "@/features/deliveries/columns";
-import { mockDeliveries, mockLockers } from "@/lib/mock-data";
+import { useLocker, useLockerHistory } from "@/hooks/use-api";
 import { formatDate, formatPercent } from "@/lib/utils";
 import type { Locker } from "@/types";
 
@@ -22,9 +22,18 @@ export default function LockerDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const { toast } = useToast();
-  const found = mockLockers.find((l) => l.id === id);
-  const [locker, setLocker] = useState<Locker | undefined>(found);
+  const { data: found, isLoading } = useLocker(id);
+  const { data: history = [] } = useLockerHistory(id);
+  const [locker, setLocker] = useState<Locker | undefined>();
   const [confirmDeactivate, setConfirmDeactivate] = useState(false);
+
+  useEffect(() => {
+    if (found) setLocker(found);
+  }, [found]);
+
+  if (isLoading && !locker) {
+    return <div className="space-y-6" />;
+  }
 
   if (!locker) {
     return (
@@ -37,7 +46,6 @@ export default function LockerDetailPage() {
   }
 
   const occupancyPct = Math.round((locker.occupancy / locker.capacity) * 100);
-  const history = mockDeliveries.filter((d) => d.lockerId === locker.id).slice(0, 20);
 
   return (
     <div className="space-y-6">

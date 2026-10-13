@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Shield, Users } from "lucide-react";
 import { DetailHeader } from "@/components/shared/detail-header";
 import { DetailList, DetailRow } from "@/components/shared/detail-list";
@@ -12,17 +12,26 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
-import { findMockUser } from "@/lib/mock-users";
+import { useAdminUser } from "@/hooks/use-api";
 import { ROLE_LABELS, ROLE_PERMISSIONS } from "@/lib/rbac";
 import { formatDateTime } from "@/lib/utils";
+import type { User } from "@/types";
 
 export default function AdminUserDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const { toast } = useToast();
-  const found = findMockUser(id);
-  const [user, setUser] = useState(found);
+  const { data: found, isLoading } = useAdminUser(id);
+  const [user, setUser] = useState<User | undefined>();
   const [confirmSuspend, setConfirmSuspend] = useState(false);
+
+  useEffect(() => {
+    if (found) setUser(found);
+  }, [found]);
+
+  if (isLoading && !user) {
+    return <div className="space-y-6" />;
+  }
 
   if (!user) {
     return (
